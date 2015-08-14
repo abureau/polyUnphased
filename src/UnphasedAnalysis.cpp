@@ -569,11 +569,18 @@ void UnphasedAnalysis::analysemarkers_main(UnphasedOptions &options, const strin
 
 void UnphasedAnalysis::analysetraits(UnphasedOptions &options, const string &which, ofstream &dumpfile) {
 
-    // loop over diseases and traits
+    // loop over diseases, joint affection statuses and traits
     for (int diseasecount = 0; diseasecount < options.disease.size(); diseasecount++) {
         currentphenotype = diseasehash[options.disease[diseasecount]];
         typeOfPhenotype = "binary";
         analysemarkers(options, which, options.disease[diseasecount], dumpfile);
+    }
+    for (int jointcount = 0; jointcount < options.joint.size(); jointcount++) {
+        // à faire: extraire les noms de statuts d'affection de options.joint[jointcount]
+        currentphenotype = diseasehash[chaine1(options.joint[jointcount])];
+        currentphenotype2 = diseasehash[chaine2(options.joint[jointcount])];
+        typeOfPhenotype = "polytomous";
+        analysemarkers(options, which, options.joint[jointcount], dumpfile);
     }
     for (int traitcount = 0; traitcount < options.trait.size(); traitcount++) {
         currentphenotype = traithash[options.trait[traitcount]];

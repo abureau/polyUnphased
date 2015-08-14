@@ -237,6 +237,8 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
 // score the data and return loglikelihood and gradient
 void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
                              vector<double> &gradient) {
+    int phenoval;
+    
     // empirical variance
     empiricalVariance.resize(gradient.size());
     for (int i = 0; i < empiricalVariance.size(); i++) {
@@ -299,7 +301,15 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
                     // trait value
                     if (typeOfPhenotype == "quant") {
                         sibTrait.push_back(family->sibs[sib].trait[currentphenotype]);
-                    } else {
+                    } else if (typeOfPhenotype == "polytomous") {
+                    	if (family->sibs[sib].affection[currentphenotype] == AFFECTED) {
+                    	 	if (family->sibs[sib].affection[currentphenotype2] == AFFECTED) phenoval = 3;
+                    	 	else phenoval = 1;
+                    	 	} else { if (family->sibs[sib].affection[currentphenotype2] == AFFECTED) phenoval = 2;
+                    	 				else phenoval = 4;
+                    	 				}
+                    	sibTrait.push_back(phenoval); 		
+                    	} else {                    	
                         sibTrait.push_back(family->sibs[sib].affection[currentphenotype] == AFFECTED);
                     }
                     // sex
@@ -387,7 +397,15 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
             double subjectTrait;
             if (typeOfPhenotype == "quant") {
                 subjectTrait = unrelateds[permuteUnrelated[nsubject]].trait[currentphenotype];
-            } else {
+            } else if (typeOfPhenotype == "polytomous") {
+            	if (unrelateds[permuteUnrelated[nsubject]].affection[currentphenotype] == AFFECTED) {
+            		if (unrelateds[permuteUnrelated[nsubject]].affection[currentphenotype2] == AFFECTED) subjectTrait = 3;
+            		else subjectTrait = 1;
+            		} else { if (unrelateds[permuteUnrelated[nsubject]].affection[currentphenotype2] == AFFECTED) subjectTrait = 2;
+            					else subjectTrait = 4;
+            					}
+            	}
+            else {
                 subjectTrait = (unrelateds[permuteUnrelated[nsubject]].affection[currentphenotype] == AFFECTED);
             }
 
