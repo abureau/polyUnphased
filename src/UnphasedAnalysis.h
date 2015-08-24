@@ -177,7 +177,7 @@ protected:
 
     // bookkeeping data
     vector<int> currentmarker;
-    int currentphenotype;
+    int currentphenotype, currentphenotype2;
     vector<vector<int> > allele;
     double globalpvalue;
     double bestpvalue;

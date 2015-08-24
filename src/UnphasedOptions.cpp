@@ -40,6 +40,7 @@ UnphasedOptions::UnphasedOptions(int argc, char **argv): Options(argc, argv, fal
     option("-tag", tag);
     option("-trait", trait);
     option("-disease", disease);
+    option("-joint", joint);
     option("-confounder", confounder);
     option("-modifier", modifier);
     option("-factor", factor);
