@@ -204,11 +204,11 @@ void UnphasedAnalysis::resizeArrays() {
     }
     frequency.resize(size);
     frequency = 0;
-    betaparent.resize(size);
+    betaparent.resize(size*(K-1));
     betaparent = 0;
     alpha.resize(size);
     alpha = 0;
-    beta.resize(size);
+    beta.resize(size*(K-1));
     beta = 0;
     stderror.resize(size);
     stderror = 0;

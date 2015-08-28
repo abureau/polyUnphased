@@ -31,6 +31,8 @@ using namespace std;
 
 #ifndef __LINKAGEDATA__
 
+// Number of levels of polytomous outcome
+const int K = 4
 const int AFFECTED = 2;
 const int UNAFFECTED = 1;
 const int UNSURE = 0;
