@@ -1,4 +1,4 @@
-# Makefile for UNPHASED
+# Makefile for POLYUNPHASED
 #
 #   Copyright (c) 2006 Frank Dudbridge
 #   MRC Biostatistics Unit
@@ -35,7 +35,7 @@ JAR=jar
 
 OPTIONS =  -Wno-deprecated -O3
 
-unphased: unphased.cpp UnphasedOptions.o LinkageData.o NuclearFamily.o Haplotype.o UnphasedAnalysis.o UnphasedAnalysisModels.o UnphasedAnalysisExploratory.o UnphasedAnalysisLikelihood.o UnphasedAnalysisOutput.o matinv.o pvalues.o asran.o UnphasedScore.o UnphasedScoreFamily.o UnphasedScoreUnrelated.o 
+polyunphased: unphased.cpp UnphasedOptions.o LinkageData.o NuclearFamily.o Haplotype.o UnphasedAnalysis.o UnphasedAnalysisModels.o UnphasedAnalysisExploratory.o UnphasedAnalysisLikelihood.o UnphasedAnalysisOutput.o matinv.o pvalues.o asran.o UnphasedScore.o UnphasedScoreFamily.o UnphasedScoreUnrelated.o 
 	$(CCC) -o unphased unphased.cpp UnphasedOptions.o LinkageData.o NuclearFamily.o Haplotype.o UnphasedAnalysis.o UnphasedAnalysisModels.o UnphasedAnalysisExploratory.o UnphasedAnalysisLikelihood.o UnphasedAnalysisOutput.o UnphasedScore.o UnphasedScoreFamily.o UnphasedScoreUnrelated.o pvalues.o asran.o matinv.o $(SYNTAX) $(OPTIONS)
 
 UnphasedOptions.o: UnphasedOptions.cpp UnphasedOptions.h Options.h
