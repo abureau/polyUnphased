@@ -569,7 +569,7 @@ void UnphasedAnalysis::analysemarkers_main(UnphasedOptions &options, const strin
 
 void UnphasedAnalysis::analysetraits(UnphasedOptions &options, const string &which, ofstream &dumpfile) {
 
-	string pheno1, pheno2;
+	string pheno1, pheno2, phenostr;
     // loop over diseases, joint affection statuses and traits
     for (int diseasecount = 0; diseasecount < options.disease.size(); diseasecount++) {
         currentphenotype = diseasehash[options.disease[diseasecount]];
@@ -579,7 +579,8 @@ void UnphasedAnalysis::analysetraits(UnphasedOptions &options, const string &whi
     for (int jointcount = 0; jointcount < options.joint.size(); jointcount++) {
         // Extraire les noms de statut d'affection de options.joint[jointcount]
         // Nom du premier statut d'affection, avant le ":"
-        pheno1 = strtok(options.joint[jointcount],":");
+	phenostr = options.joint[jointcount];
+        pheno1 = strtok(phenostr,":");
         // Nom du deuxième statut d'affection, après le ":" (il ne devrait pas y avoir de 2e ":",
         // mais au cas où, on indique ce délimiteur).
         pheno2 = strtok(NULL,":");

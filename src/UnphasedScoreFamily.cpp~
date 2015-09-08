@@ -116,8 +116,6 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
     }
 
     int betasize;
-    if (typeOfPhenotype == "polytomous") betasize = nhap*(K-1);
-    else betasize = nhap;
     int nconfounder = options.confounder.size(); // number of confounders
     int nmodifier = options.modifier.size(); // number of modifiers
 
@@ -1322,6 +1320,8 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
             globalDenom[i] = denomSum;
             globalGrad[i].resize(gradient.size(), 0);
             int ix = 0;
+            if (typeOfPhenotype == "polytomous") betasize = nhap*(K-1);
+            else betasize = nhap;
             for (int j = 0; j < betasize; j++) {
                 globalGrad[i][ix++] += betaGradient[j];
             }
