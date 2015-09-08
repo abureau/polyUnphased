@@ -42,16 +42,19 @@ int UnphasedAnalysis::sizeOfGradient(UnphasedOptions &options) {
 
     int size = 0;
     int nhap = genoCode.size();
+    int betasize;
+    if (typeOfPhenotype == "polytomous") betasize = nhap*(K-1);
+    else betasize = nhap;
 
     // beta
-    size += nhap;
+    else size += betasize;
 
     // freq
     size += nhap;
 
     // betaparent
     if (haveBetaParent(options)) {
-        size += nhap + haveBetaParent0(options);
+        size += betasize + haveBetaParent0(options);
     }
 
     // alpha
@@ -95,6 +98,7 @@ int UnphasedAnalysis::freeParameters(UnphasedOptions &options) {
         for (int j = 0; j < genoCode.size(); j++) if (!zero[j]) {
                 thisndim = max(thisndim, group[i][j]);
             }
+        if (typeOfPhenotype == "polytomous") thisndim *= K-1;
         ndim += thisndim;
     }
 
@@ -109,7 +113,8 @@ int UnphasedAnalysis::freeParameters(UnphasedOptions &options) {
     if (haveBetaParent(options)) {
         for (int i = 0; i < nhap; i++)
             if (!zero[i] && i != refIndex) {
-                ndim++;
+                if (typeOfPhenotype == "polytomous") ndim += K-1;
+                else ndim++;
             }
         if (haveBetaParent0(options)) {
             ndim++;    // intercept
@@ -136,7 +141,8 @@ int UnphasedAnalysis::freeParameters(UnphasedOptions &options) {
             if (typeOfPhenotype == "quant") {
                 ndim++; // intercept
                 if (haveFamilies && !options.hhrr) {
-                    ndim++;    // betaparent intercept
+                    if (typeOfPhenotype == "polytomous") ndim += K-1;
+                    else ndim++;    // betaparent intercept
                 }
             }
         }
@@ -175,21 +181,38 @@ void UnphasedAnalysis::gradientFreeParameters(vector<double> &gradient,
                         i == 0 && options.condition.size() > 0) {
                     if (group[i][j] < group[i][refIndex]) {
                         g[group[i][j] + ndim[i]] += gradient[j];
+                        if (typeOfPhenotype == "polytomous")
+                        	{
+                        	for (int k = 1; k < K-1; k++)
+                        		g[group[i][j] + ndim[i] + k*nhap] += gradient[j + k*nhap];
+                        	}
                     }
                     if (group[i][j] > group[i][refIndex]) {
                         g[group[i][j] + ndim[i] - 1] += gradient[j];
+                        if (typeOfPhenotype == "polytomous")
+                        	{
+                        	for (int k = 1; k < K-1; k++)
+                        		g[group[i][j] + ndim[i] -1 + k*nhap] += gradient[j + k*nhap];
+                        	}
                     }
                 } else {
                     if (group[i][j] != group[i][refIndex]) {
                         g[ndim[options.condition.size()>0]] += gradient[j];
+                        if (typeOfPhenotype == "polytomous")
+                        	{
+                        	for (int k = 1; k < K-1; k++)
+                        		g[ndim[options.condition.size()>0] + k*nhap] += gradient[j + k*nhap];
+                        	}
                     }
                 }
             }
     }
 
     int ix = g.size() - 1;
+    int iy;
+    if (typeOfPhenotype == "polytomous") iy = nhap*(K-1);
+    else iy = nhap;
     // freq
-    int iy = nhap;
     for (int i = 0; i < nhap; i++) if (!zero[i] && i != refIndex) {
             g[ix--] = gradient[i+iy];
         }
@@ -198,9 +221,18 @@ void UnphasedAnalysis::gradientFreeParameters(vector<double> &gradient,
     if (haveBetaParent(options)) {
         for (int i = 0; i < nhap; i++)
             if (!zero[i] && i != refIndex) {
-                g[ix--] = gradient[i+iy];
+                        if (typeOfPhenotype == "polytomous") {
+                        	for (int k = 0; k < K-1; k++)
+                        		g[ix - (K-2-k)*nhap] += gradient[j + k*nhap];
+                        	}
+                else g[ix] = gradient[i+iy];
+                ix--;
             }
-        iy += nhap;
+	    if (typeOfPhenotype == "polytomous") {
+	    	iy += nhap*(K-1);
+	    	ix -= nhap*(K-2);
+	    	}
+    	else iy += nhap;
         if (haveBetaParent0(options)) {
             g[ix--] = gradient[iy++];
         }

@@ -1845,9 +1845,8 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
         }
         if (haveBetaParent0(options)) {
             gradient[ix++] += betaparent0Gradient[0];
-        	if (typeOfPhenotype == "polytomous")
-        		for (int i = 1; i < K-1; i++)
-            		gradient[ix++] += betaparent0Gradient[i];
+		/* Ici pas besoin de traiter le cas polytomique, car haveBetaParent0 implique que
+typeOfPhenotype == "quant" */
         }
     }
     if (haveAlpha(options)) {
