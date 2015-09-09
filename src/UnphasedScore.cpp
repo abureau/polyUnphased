@@ -58,6 +58,10 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
 
     vector<double> gradient(sizeOfGradient(options), 0);
     double llhd = 0;
+    int betasize;
+    if (typeOfPhenotype == "polytomous") betasize = nhap*(K-1);
+    else betasize = nhap;
+
     score(options, loglikelihood, gradient);
     if (null) {
         return;
@@ -111,7 +115,7 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
                 }
             }
     int ix = v.size() - 1;
-    int iy = nhap;
+    int iy = betasize;
     // frequency
     for (int i = 0; i < nhap; i++) if (!zero[i] && i != refIndex) {
             gradientFreeParameters(variance[i+iy], v[ix--], options);
@@ -121,9 +125,17 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
     if (haveBetaParent(options)) {
         for (int i = 0; i < nhap; i++)
             if (!zero[i] && i != refIndex) {
-                gradientFreeParameters(variance[i+iy], v[ix--], options);
+                if (typeOfPhenotype == "polytomous") {
+                    for (int k = 0; k < K-1; k++)
+                        gradientFreeParameters(variance[i+iy + k*nhap], v[ix - (K-2-k)*nhap], options);
+                    }
+                else gradientFreeParameters(variance[i+iy], v[ix], options);
+                ix--;
             }
-        iy += nhap;
+	    if (typeOfPhenotype == "polytomous") {
+	    	ix -= nhap*(K-2);
+	    	}
+    	iy += betasize;
         if (haveBetaParent0(options)) {
             gradientFreeParameters(variance[iy++], v[ix--], options);
         }
@@ -166,7 +178,7 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
     // standard errors of beta parameters
     stderror = 0;
     for (int i = 0; i < group.size(); i++)
-        for (int j = 0; j < nhap; j++) if (!zero[j] && !(i && rare[j])) {
+        for (int j = 0; j < betasize; j++) if (!zero[j] && !(i && rare[j])) {
                 if (options.model != "commonmain" ||
                         i == 0 && options.condition.size() > 0) {
                     if (group[i][j] < group[i][refIndex]) {
@@ -195,7 +207,7 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
         }
     // betaparent
     if (haveBetaParent(options)) {
-        for (int i = 0; i < nhap; i++) if (!zero[i] && i != refIndex) {
+        for (int i = 0; i < betasize; i++) if (!zero[i] && i != refIndex) {
                 ix--;
             }
         if (haveBetaParent0(options)) {

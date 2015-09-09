@@ -162,6 +162,10 @@ void UnphasedAnalysis::gradientFreeParameters(vector<double> &gradient,
 
     int nhap = genoCode.size();
     int refIndex = reference.index(genoCode);
+    int betasize;
+    if (typeOfPhenotype == "polytomous") betasize = nhap*(K-1);
+    else betasize = nhap;
+
     for (int i = 0; i < g.size(); i++) {
         g[i] = 0;
     }
@@ -209,9 +213,7 @@ void UnphasedAnalysis::gradientFreeParameters(vector<double> &gradient,
     }
 
     int ix = g.size() - 1;
-    int iy;
-    if (typeOfPhenotype == "polytomous") iy = nhap*(K-1);
-    else iy = nhap;
+    int iy = betasize;
     // freq
     for (int i = 0; i < nhap; i++) if (!zero[i] && i != refIndex) {
             g[ix--] = gradient[i+iy];
@@ -229,10 +231,9 @@ void UnphasedAnalysis::gradientFreeParameters(vector<double> &gradient,
                 ix--;
             }
 	    if (typeOfPhenotype == "polytomous") {
-	    	iy += nhap*(K-1);
 	    	ix -= nhap*(K-2);
 	    	}
-    	else iy += nhap;
+    	iy += betasize;
         if (haveBetaParent0(options)) {
             g[ix--] = gradient[iy++];
         }
