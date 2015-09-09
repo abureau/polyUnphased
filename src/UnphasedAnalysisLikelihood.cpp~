@@ -47,7 +47,7 @@ int UnphasedAnalysis::sizeOfGradient(UnphasedOptions &options) {
     else betasize = nhap;
 
     // beta
-    size += betasize;
+    else size += betasize;
 
     // freq
     size += nhap;
