@@ -94,7 +94,7 @@ int UnphasedAnalysis::freeParameters(UnphasedOptions &options) {
     // groups of betas
     int ndim = 0;
     for (int i = 0; i < group.size(); i++) {
-        int thisndim = 0;
+        thisndim = 0;
         for (int j = 0; j < genoCode.size(); j++) if (!zero[j]) {
                 thisndim = max(thisndim, group[i][j]);
             }

@@ -210,7 +210,7 @@ void UnphasedAnalysis::resizeArrays() {
     alpha = 0;
     beta.resize(size*(K-1));
     beta = 0;
-    stderror.resize(size);
+    stderror.resize(size*(K-1));
     stderror = 0;
     for (int i = 0; i < betaCovariate.size(); i++)
         for (int j = 0; j < betaCovariate[i].size(); j++) {

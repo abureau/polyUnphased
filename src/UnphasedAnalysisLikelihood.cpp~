@@ -34,6 +34,7 @@
 #include "asran.h"
 
 static Random ran;
+int thisndim = 0;
 
 //  sizeOfGradient
 
@@ -47,7 +48,7 @@ int UnphasedAnalysis::sizeOfGradient(UnphasedOptions &options) {
     else betasize = nhap;
 
     // beta
-    else size += betasize;
+    size += betasize;
 
     // freq
     size += nhap;
@@ -94,7 +95,7 @@ int UnphasedAnalysis::freeParameters(UnphasedOptions &options) {
     // groups of betas
     int ndim = 0;
     for (int i = 0; i < group.size(); i++) {
-        int thisndim = 0;
+        thisndim = 0;
         for (int j = 0; j < genoCode.size(); j++) if (!zero[j]) {
                 thisndim = max(thisndim, group[i][j]);
             }
@@ -162,6 +163,10 @@ void UnphasedAnalysis::gradientFreeParameters(vector<double> &gradient,
 
     int nhap = genoCode.size();
     int refIndex = reference.index(genoCode);
+    int betasize;
+    if (typeOfPhenotype == "polytomous") betasize = nhap*(K-1);
+    else betasize = nhap;
+
     for (int i = 0; i < g.size(); i++) {
         g[i] = 0;
     }
@@ -209,9 +214,7 @@ void UnphasedAnalysis::gradientFreeParameters(vector<double> &gradient,
     }
 
     int ix = g.size() - 1;
-    int iy;
-    if (typeOfPhenotype == "polytomous") iy = nhap*(K-1);
-    else iy = nhap;
+    int iy = betasize;
     // freq
     for (int i = 0; i < nhap; i++) if (!zero[i] && i != refIndex) {
             g[ix--] = gradient[i+iy];
@@ -229,10 +232,9 @@ void UnphasedAnalysis::gradientFreeParameters(vector<double> &gradient,
                 ix--;
             }
 	    if (typeOfPhenotype == "polytomous") {
-	    	iy += nhap*(K-1);
 	    	ix -= nhap*(K-2);
 	    	}
-    	else iy += nhap;
+    	iy += betasize;
         if (haveBetaParent0(options)) {
             g[ix--] = gradient[iy++];
         }
