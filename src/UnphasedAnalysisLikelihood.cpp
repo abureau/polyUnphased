@@ -196,7 +196,7 @@ void UnphasedAnalysis::gradientFreeParameters(vector<double> &gradient,
                         if (typeOfPhenotype == "polytomous")
                         	{
                         	for (int k = 1; k < K-1; k++)
-                        		g[group[i][j] + ndim[i] -1 + k*nhap] += gradient[j + k*nhap];
+                        		g[group[i][j] + ndim[i] -1 + k*thisndim] += gradient[j + k*nhap];
                         	}
                     }
                 } else {
@@ -205,7 +205,7 @@ void UnphasedAnalysis::gradientFreeParameters(vector<double> &gradient,
                         if (typeOfPhenotype == "polytomous")
                         	{
                         	for (int k = 1; k < K-1; k++)
-                        		g[ndim[options.condition.size()>0] + k*nhap] += gradient[j + k*nhap];
+                        		g[ndim[options.condition.size()>0] + k*thisndim] += gradient[j + k*nhap];
                         	}
                     }
                 }
@@ -215,8 +215,11 @@ void UnphasedAnalysis::gradientFreeParameters(vector<double> &gradient,
     int ix = g.size() - 1;
     int iy = betasize;
     // freq
+    // On en profite pour compter les haplotypes non-zéro et non-référence
+    int nvhap = 0;
     for (int i = 0; i < nhap; i++) if (!zero[i] && i != refIndex) {
             g[ix--] = gradient[i+iy];
+            nvhap++;
         }
     iy += nhap;
     // betaparent
@@ -225,13 +228,13 @@ void UnphasedAnalysis::gradientFreeParameters(vector<double> &gradient,
             if (!zero[i] && i != refIndex) {
                         if (typeOfPhenotype == "polytomous") {
                         	for (int k = 0; k < K-1; k++)
-                        		g[ix - (K-2-k)*nhap] += gradient[i + iy + k*nhap];
+                        		g[ix - (K-2-k)*nvhap] += gradient[i + iy + k*nhap];
                         	}
                 else g[ix] = gradient[i+iy];
                 ix--;
             }
 	    if (typeOfPhenotype == "polytomous") {
-	    	ix -= nhap*(K-2);
+	    	ix -= nvhap*(K-2);
 	    	}
     	iy += betasize;
         if (haveBetaParent0(options)) {
