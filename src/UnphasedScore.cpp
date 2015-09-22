@@ -275,12 +275,12 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
             cout << frequency[i] << " ";
         }
         cout << "beta ";
-        for (int i = 0; i < genoCode.size(); i++) {
+        for (int i = 0; i < betasize; i++) {
             cout << beta[i] << " ";
         }
         cout << endl;
         cout << "betaparent ";
-        for (int i = 0; i < genoCode.size(); i++) {
+        for (int i = 0; i < betasize; i++) {
             cout << betaparent[i] << " ";
         }
         cout << endl;
