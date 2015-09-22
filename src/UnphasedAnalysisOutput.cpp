@@ -511,10 +511,16 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                                      double null, double alternative, int df,
                                      UnphasedOptions &options) {
 
+    int nhap = genoCode.size(); // number of haplotypes
+
     if (typeOfPhenotype == "binary") {
         *outStream << endl << "ANALYSIS OF BINARY TRAIT: " << trait << endl;
     } else {
+    	if (typeOfPhenotype == "polytomous")
+    		*outStream << endl << "ANALYSIS OF POLYTOMOUS TRAIT: " << trait << endl;
+    	else
         *outStream << endl << "ANALYSIS OF QUANTITATIVE TRAIT: " << trait << endl;
+        }
     }
     *outStream << endl << "MARKER OPTIONS" << endl;
     *outStream << "Test marker" << (options.window == 1 ? ": " : "s: ");
@@ -556,7 +562,7 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
     //  int haplotypeWidth=options.genotype?9:(alleles?7:10);
     int haplotypeWidth = 12;
 
-    for (int i = 0; i < genoCode.size(); i++) {
+    for (int i = 0; i < nhap; i++) {
         if (!zero[i]) {
             Haplotype hap = genoCode[i];
             int width = hap.str(options.condition.size() * options.condgenotype, options.genotype, ACGT).length() + 1;
@@ -595,7 +601,7 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
         double totalFamilyCount[2];
         for (int i = 0; i < 2; i++) {
             totalFamilyCount[i] = 0;
-            for (int j = 0; j < genoCode.size(); j++) if (!zero[j]) {
+            for (int j = 0; j < nhap; j++) if (!zero[j]) {
                     totalFamilyCount[i] += familyCount[i][j];
                 }
         }
@@ -651,7 +657,7 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
         double totalUnrelatedCount[2];
         for (int i = 0; i < 2; i++) {
             totalUnrelatedCount[i] = 0;
-            for (int j = 0; j < genoCode.size(); j++) if (!zero[j]) {
+            for (int j = 0; j < nhap; j++) if (!zero[j]) {
                     totalUnrelatedCount[i] += unrelatedCount[i][j];
                 }
         }
@@ -740,6 +746,7 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
     *outStream << setw(haplotypeWidth) << " ";
     for (int k = 1; k < K; k++)
     	*outStream << setw(6) << "Level" << setw(42) << k;
+    *outStream << endl;
     	}
     *outStream << setw(haplotypeWidth) << (options.genotype ? "Genotype" : (alleles ? "Allele" : "Haplotype"));
     if (typeOfPhenotype == "quant") {
@@ -749,6 +756,13 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
     }
     *outStream << setw(12) << "95%Lo"
                << setw(12) << "95%Hi";
+    if (typeOfPhenotype == "polytomous") {
+        for (int k = 1; k < K-1; k++) {
+	        *outStream << setw(12) << "Odds-R";
+		    *outStream << setw(12) << "95%Lo"
+               		<< setw(12) << "95%Hi";
+        	}
+        }
 
     if (options.individual) *outStream << setw(12) << "Chisq"
                                            << setw(12) << "P-value";
