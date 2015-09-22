@@ -736,6 +736,11 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
     }
     *outStream << "Reference " << (options.genotype ? "genotype: " : (alleles ? "allele: " : "haplotype: ")) << reference.str(options.condition.size()*options.condgenotype, options.genotype, ACGT) << endl;
     outStream->setf(ios::left);
+    if (typeOfPhenotype == "polytomous") {
+    *outStream << setw(haplotypeWidth) << " ";
+    for (int k = 1; k < K; k++)
+    	*outStream << setw(6) << "Level" << setw(42) << k;
+    	}
     *outStream << setw(haplotypeWidth) << (options.genotype ? "Genotype" : (alleles ? "Allele" : "Haplotype"));
     if (typeOfPhenotype == "quant") {
         *outStream << setw(12) << "AddVal";
@@ -760,11 +765,21 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
             Haplotype hap = sortedHaps[i];
             *outStream << setw(haplotypeWidth) << hap.str(options.condition.size()*options.condgenotype, options.genotype, ACGT);
             double thisbeta = beta[j] - beta[refIndex];
-            if (typeOfPhenotype != "quant")
+            if (typeOfPhenotype != "quant") {
                 *outStream << setw(11) << round(exp(thisbeta), options.epsilon) << " "
                            << setw(11) << round(exp(thisbeta - 1.96 * stderror[j]), options.epsilon) << " "
                            << setw(11) << round(exp(thisbeta + 1.96 * stderror[j]), options.epsilon) << " "
                            ;
+                if (typeOfPhenotype == "polytomous") {
+                    for (int k = 1; k < K-1; k++) {
+                		thisbeta = beta[j + k*nhap] - beta[refIndex + k*nhap];
+		                *outStream << setw(11) << round(exp(thisbeta), options.epsilon) << " "
+                           		<< setw(11) << round(exp(thisbeta - 1.96 * stderror[j]), options.epsilon) << " "
+                           		<< setw(11) << round(exp(thisbeta + 1.96 * stderror[j]), options.epsilon) << " "
+                           		;
+					}	
+				}
+			}
             else
                 *outStream << setw(11) << round(thisbeta, options.epsilon) << " "
                            << setw(11) << round(thisbeta - 1.96 * stderror[j], options.epsilon) << " "
