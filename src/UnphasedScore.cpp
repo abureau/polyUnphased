@@ -395,12 +395,12 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
                 for (int j = 0; j < gradient.size(); j++) {
                     empiricalVariance[i][j] += familyGradient[i] * familyGradient[j];
                 }
+			// Additional debugging code
+            if (options.llhd) {
+            cout << "sibTrait" << sibTrait << endl;
+            }
         }
     }
-// Additional debugging code
-            if (options.llhd) {
-            cout << sibTrait << endl;
-            }
 
     // loop through the unrelateds
     int nsubject = 0;
