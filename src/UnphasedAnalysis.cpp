@@ -580,9 +580,14 @@ void UnphasedAnalysis::analysetraits(UnphasedOptions &options, const string &whi
         // Extraire les noms de statut d'affection de options.joint[jointcount]
         // Nom du premier statut d'affection, avant le ":"
 	std::size_t seppos = options.joint[jointcount].find(":");
-        pheno1 = options.joint[jointcount].substr(0,seppos-1);
+        pheno1 = options.joint[jointcount].substr(0,seppos);
         // Nom du deuxième statut d'affection, après le ":" 
-        pheno2 = options.joint[jointcount].substr(seppos,options.joint[jointcount].size()-seppos);
+        pheno2 = options.joint[jointcount].substr(seppos+1,options.joint[jointcount].size()-seppos);
+			// Additional debugging code
+        /*    if (options.llhd) {
+            	cout << "pheno1 " << pheno1;
+            	cout << " pheno2 " << pheno2 << endl;
+                } */
         currentphenotype = diseasehash[pheno1];
         currentphenotype2 = diseasehash[pheno2];
         typeOfPhenotype = "polytomous";
