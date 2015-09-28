@@ -397,6 +397,10 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
                 }
         }
     }
+// Additional debugging code
+            if (options.llhd) {
+            cout << sibTrait << endl;
+            }
 
     // loop through the unrelateds
     int nsubject = 0;
