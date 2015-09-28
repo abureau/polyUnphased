@@ -818,8 +818,8 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
 
     // gradients
     vector<double> freqGradient(nhap, 0);
-    vector<double> betaGradient(nhap*(K-1), 0);
-    vector<double> betaparentGradient(nhap*(K-1), 0);
+    vector<double> betaGradient(betasize, 0);
+    vector<double> betaparentGradient(betasize, 0);
     double betaparent0Gradient = 0;
     vector<double> alphaGradient(nhap, 0);
     double alpha0Gradient = 0;
