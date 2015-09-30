@@ -98,8 +98,8 @@ int UnphasedAnalysis::freeParameters(UnphasedOptions &options) {
         for (int j = 0; j < genoCode.size(); j++) if (!zero[j]) {
                 thisndim = max(thisndim, group[i][j]);
             }
-        if (typeOfPhenotype == "polytomous") thisndim *= (K-1);
-        ndim += thisndim;
+        if (typeOfPhenotype == "polytomous") ndim += (K-1)*thisndim;
+        else ndim += thisndim;
     }
     // debugging code
     if (options.llhd)
