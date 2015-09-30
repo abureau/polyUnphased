@@ -268,30 +268,31 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
             empiricalVariance[i][j] = 0;
         }
     }
+    int nhap = genoCode.size();
+    if (typeOfPhenotype == "polytomous") betasize = nhap*(K-1);
+    else betasize = nhap;
 
     if (options.llhd) {
         cout << "frequency ";
-        for (int i = 0; i < genoCode.size(); i++) {
+        for (int i = 0; i < nhap; i++) {
             cout << frequency[i] << " ";
         }
         cout << "beta ";
-        for (int i = 0; i < genoCode.size(); i++) {
+        for (int i = 0; i < betasize; i++) {
             cout << beta[i] << " ";
         }
         cout << endl;
         cout << "betaparent ";
-        for (int i = 0; i < genoCode.size(); i++) {
+        for (int i = 0; i < betasize; i++) {
             cout << betaparent[i] << " ";
         }
         cout << endl;
         cout << "alpha ";
-        for (int i = 0; i < genoCode.size(); i++) {
+        for (int i = 0; i < nhap; i++) {
             cout << alpha[i] << " ";
         }
         cout << endl;
     }
-
-    int nhap = genoCode.size();
 
     loglikelihood = 0;
 

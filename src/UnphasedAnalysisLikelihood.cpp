@@ -141,8 +141,7 @@ int UnphasedAnalysis::freeParameters(UnphasedOptions &options) {
             if (typeOfPhenotype == "quant") {
                 ndim++; // intercept
                 if (haveFamilies && !options.hhrr) {
-                    if (typeOfPhenotype == "polytomous") ndim += K-1;
-                    else ndim++;    // betaparent intercept
+                    ndim++;    // betaparent intercept
                 }
             }
         }
@@ -188,7 +187,7 @@ void UnphasedAnalysis::gradientFreeParameters(vector<double> &gradient,
                         if (typeOfPhenotype == "polytomous")
                         	{
                         	for (int k = 1; k < K-1; k++)
-                        		g[group[i][j] + ndim[i] + k*nhap] += gradient[j + k*nhap];
+                        		g[group[i][j] + ndim[i] + k*thisndim] += gradient[j + k*nhap];
                         	}
                     }
                     if (group[i][j] > group[i][refIndex]) {
@@ -696,9 +695,19 @@ double UnphasedAnalysis::evaluate(vector<double> &y, vector<double> &g,
                         i == 0 && options.condition.size() > 0) {
                     if (group[i][j] < group[i][refIndex]) {
                         beta[j] += y[group[i][j] + ndim[i]];
+                        if (typeOfPhenotype == "polytomous")
+                        	{
+                        	for (int k = 1; k < K-1; k++)
+								beta[j + k*nhap] += y[group[i][j] + ndim[i] + k*thisndim];
+							}
                     }
                     if (group[i][j] > group[i][refIndex]) {
                         beta[j] += y[group[i][j] + ndim[i] - 1];
+                        if (typeOfPhenotype == "polytomous")
+                        	{
+                        	for (int k = 1; k < K-1; k++)
+								beta[j + k*nhap] += y[group[i][j] + ndim[i] - 1 + k*thisndim];
+							}
                     }
                 } else {
                     if (group[i][j] != group[i][refIndex]) {
@@ -711,15 +720,26 @@ double UnphasedAnalysis::evaluate(vector<double> &y, vector<double> &g,
     // set up the nuisance parameters
     int ix = y.size() - 1;
     // freq
+    // On en profite pour compter les haplotypes non-zéro et non-référence
+    int nvhap = 0;
     for (int i = 0; i < nhap; i++) if (!zero[i] && i != refIndex) {
             frequency[i] = y[ix--];
+            nvhap++;
         }
     // betaparent
     if (haveBetaParent(options)) {
         for (int i = 0; i < nhap; i++)
             if (!zero[i] && i != refIndex) {
-                betaparent[i] = y[ix--];
+            	if (typeOfPhenotype == "polytomous") {
+                        	for (int k = 0; k < K-1; k++)
+                        		betaparent[i + k*nhap] = y[ix - (K-2-k)*nvhap];
+                        	}
+                else betaparent[i] = y[ix];
+			ix--;
             }
+        if (typeOfPhenotype == "polytomous") {
+	    	ix -= nvhap*(K-2);
+	    	}
         if (haveBetaParent0(options)) {
             betaparent0 = y[ix--];
         }
