@@ -98,9 +98,12 @@ int UnphasedAnalysis::freeParameters(UnphasedOptions &options) {
         for (int j = 0; j < genoCode.size(); j++) if (!zero[j]) {
                 thisndim = max(thisndim, group[i][j]);
             }
-        if (typeOfPhenotype == "polytomous") thisndim *= K-1;
+        if (typeOfPhenotype == "polytomous") thisndim *= (K-1);
         ndim += thisndim;
     }
+    // debugging code
+    if (options.llhd)
+    	cout << "thisndim freeParameters " << thisndim << endl;
 
     // nuisance parameters
     int refIndex = reference.index(genoCode);
@@ -689,6 +692,9 @@ double UnphasedAnalysis::evaluate(vector<double> &y, vector<double> &g,
             betaparentCovariate0[i][j] = 0;
         }
 
+    // debugging code
+    if (options.llhd)
+    	cout << "thisndim evaluate " << thisndim << endl;
     for (int i = 0; i < group.size(); i++) {
         for (int j = 0; j < nhap; j++) if (!zero[j] && !(i && rare[j])) {
                 if (options.model != "commonmain" ||
