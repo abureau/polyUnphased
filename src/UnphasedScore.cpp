@@ -269,6 +269,7 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
         }
     }
     int nhap = genoCode.size();
+    int betasize;
     if (typeOfPhenotype == "polytomous") betasize = nhap*(K-1);
     else betasize = nhap;
 
