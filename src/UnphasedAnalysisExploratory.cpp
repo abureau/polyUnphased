@@ -304,9 +304,6 @@ void UnphasedAnalysis::findUsableSubjects(UnphasedOptions &options) {
                     usesib = usesib && !family->sibs[sib].missingtrait[currentphenotype];
                 } else {
                     usesib = usesib && family->sibs[sib].affection[currentphenotype] != UNSURE;
-                    if (typeOfPhenotype == "polytomous") {
-	                    usesib = usesib && family->sibs[sib].affection[currentphenotype2] != UNSURE; 
-	                }                       
                 }
                 for (int conf = 0; conf < options.confounder.size(); conf++)
                     if (options.confounder[conf] != "sibsex" && options.confounder[conf] != "parsex") {
