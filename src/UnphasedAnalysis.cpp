@@ -576,9 +576,6 @@ void UnphasedAnalysis::analysetraits(UnphasedOptions &options, const string &whi
         typeOfPhenotype = "binary";
         analysemarkers(options, which, options.disease[diseasecount], dumpfile);
     }
-    if (options.joint.size() > 0 && options.disease.size() < 2) 
-    	cout << "Too few disease traits to perform joint analysis" << endl;
-    else {
     for (int jointcount = 0; jointcount < options.joint.size(); jointcount++) {
         // Extraire les noms de statut d'affection de options.joint[jointcount]
         // Nom du premier statut d'affection, avant le ":"
@@ -586,11 +583,15 @@ void UnphasedAnalysis::analysetraits(UnphasedOptions &options, const string &whi
         pheno1 = options.joint[jointcount].substr(0,seppos);
         // Nom du deuxième statut d'affection, après le ":" 
         pheno2 = options.joint[jointcount].substr(seppos+1,options.joint[jointcount].size()-seppos);
+			// Additional debugging code
+        /*    if (options.llhd) {
+            	cout << "pheno1 " << pheno1;
+            	cout << " pheno2 " << pheno2 << endl;
+                } */
         currentphenotype = diseasehash[pheno1];
         currentphenotype2 = diseasehash[pheno2];
         typeOfPhenotype = "polytomous";
         analysemarkers(options, which, options.joint[jointcount], dumpfile);
-    }
     }
     for (int traitcount = 0; traitcount < options.trait.size(); traitcount++) {
         currentphenotype = traithash[options.trait[traitcount]];
