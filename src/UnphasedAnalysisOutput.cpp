@@ -106,7 +106,7 @@ void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options) {
 
 void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& combination, double null, double alternative, int df) {
     int     i, j, liIdx, liRef;
-    double  laTotalFamilyCount[4] = {0, 0, 0, 0}, laTotalUnrelatedCount[2] = {0, 0}, lrFU, lrFA, lrExpected, lrChi2, lrP, lrOdds, lrBeta, lrT, lrR2;
+    double  laTotalFamilyCount[2] = {0, 0}, laTotalUnrelatedCount[2] = {0, 0}, lrFU, lrFA, lrExpected, lrChi2, lrP, lrOdds, lrBeta, lrT, lrR2;
     string  lsHap1, lsHap2;
     stringstream lsMarker, lsRatios;
     Locus   loLocus1, loLocus2;
@@ -117,9 +117,7 @@ void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& comb
     sort(sortedHaps.begin(), sortedHaps.end());
 
     //  Calculate the total frequencies.
-    int nCount = 2;
-    if (typeOfPhenotype == "polytomous") nCount = 4;
-    for (i = 0; i < nCount; i++) {
+    for (i = 0; i < 2; i++) {
         for (j = 0; j < genoCode.size(); j++) {
             if (!zero[j]) {
                 laTotalFamilyCount[i]    += familyCount[i][j];
@@ -186,11 +184,7 @@ void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& comb
 			if ("binary" == typeOfPhenotype) {
 			  tabularFamilies << setw(7) << familyCount[1][liIdx] << setw(7) << familyCount[0][liIdx];
 			  tabularFamilies << setw(13) << lrOdds << setw(13) << exp(log(lrOdds)-1.96*stderror[liIdx]) << setw(13) << exp(log(lrOdds)+1.96*stderror[liIdx]) << setw(13) << lrChi2 << setw(13) << lrP;
-			} else if ("binary" == typeOfPhenotype) {
-			  tabularFamilies << setw(7) << familyCount[0][liIdx] << setw(7) << familyCount[1][liIdx] << setw(7) << familyCount[2][liIdx] << setw(7) << familyCount[3][liIdx];
-				// Reste à calculer les lrOdds pour les divers niveaux
-			}
-			else {
+			} else {
 			  tabularFamilies << setw(7) << familyCount[0][liIdx];
 			  tabularFamilies << setw(13) << lrBeta << setw(13) << stderror[liIdx] << setw(13) << lrBeta-1.96*stderror[liIdx] << setw(13) << lrBeta+1.96*stderror[liIdx] << setw(13) << lrChi2 << setw(13) << lrP;
 			}
@@ -370,10 +364,7 @@ void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& comb
 			} else {
 			  tabularFamilies << setw(13) << "NA" << setw(5) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA";
 			}
-		      } else if ("polytomous" == typeOfPhenotype) {
-			tabularFamilies << setw(13) << familyCount[0][liIdx]/laTotalFamilyCount[0] << setw(13) << familyCount[1][liIdx]/laTotalFamilyCount[1]<< setw(13) << familyCount[2][liIdx]/laTotalFamilyCount[2] << setw(13) << familyCount[3][liIdx]/laTotalFamilyCount[3];
-		      }
-		      else {
+		      } else {
 			tabularFamilies << setw(13) << familyCount[0][liIdx]/laTotalFamilyCount[0];
 			if (options.individual) {
 			  tabularFamilies << setw(13) << lrChi2 << setw(5) << 1 << setw(13) << lrP << setw(13) << lrBeta << setw(13) << stderror[liIdx] << setw(13) << lrBeta-1.96*stderror[liIdx] << setw(13) << lrBeta+1.96*stderror[liIdx];
@@ -606,10 +597,8 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
         *outStream << endl;
 
         // calculate the frequencies for output
-        double totalFamilyCount[4];
-        int nCount = 2;
-        if (typeOfPhenotype == "polytomous") nCount = 4;
-        for (int i = 0; i < nCount; i++) {
+        double totalFamilyCount[2];
+        for (int i = 0; i < 2; i++) {
             totalFamilyCount[i] = 0;
             for (int j = 0; j < nhap; j++) if (!zero[j]) {
                     totalFamilyCount[i] += familyCount[i][j];
@@ -622,27 +611,16 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
             if (!zero[j]) {
                 Haplotype hap = sortedHaps[i];
                 *outStream << setw(haplotypeWidth) << hap.str(options.condition.size()*options.condgenotype, options.genotype, ACGT);
-                if (typeOfPhenotype == "binary")
+                if (typeOfPhenotype != "quant")
                     *outStream << setw(11) << round(familyCount[1][j], options.epsilon) << " "
                                << setw(11) << round(familyCount[0][j], options.epsilon) << " "
                                << setw(11) << round(familyCount[1][j] / totalFamilyCount[1], options.epsilon) << " "
                                << setw(11) << round(familyCount[0][j] / totalFamilyCount[0], options.epsilon) << " "
                                ;
-                else { if (typeOfPhenotype == "polytomous")
-                    *outStream << setw(11) << round(familyCount[0][j], options.epsilon) << " "
-                               << setw(11) << round(familyCount[1][j], options.epsilon) << " "
-                               << setw(11) << round(familyCount[2][j], options.epsilon) << " "
-                               << setw(11) << round(familyCount[3][j], options.epsilon) << " "
-                               << setw(11) << round(familyCount[0][j] / totalFamilyCount[0], options.epsilon) << " "
-                               << setw(11) << round(familyCount[1][j] / totalFamilyCount[1], options.epsilon) << " "
-                               << setw(11) << round(familyCount[2][j] / totalFamilyCount[2], options.epsilon) << " "
-                               << setw(11) << round(familyCount[3][j] / totalFamilyCount[3], options.epsilon) << " "
-                               ;                
                 else
                     *outStream << setw(11) << round(familyCount[0][j], options.epsilon) << " "
                                << setw(11) << round(familyCount[0][j] / totalFamilyCount[0], options.epsilon) << " "
                                ;
-                }
                 if (options.rare && !rare[j]) {
                     *outStream << "+";
                 }
