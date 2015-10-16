@@ -609,7 +609,7 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                        << setw(12) << "T-Freq"
                        << setw(12) << "U-Freq"
                        ;
-
+		}
         if (options.rare) {
             *outStream << setw(12) << "Common";
         }
