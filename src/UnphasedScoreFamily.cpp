@@ -1441,16 +1441,22 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                 // counts
                 if (!options.genotype) {
                     if (!MchrX) {
-                    	if (typeOfPhenotype!="quant") familyCount[0][whichHaps[0][0][0]] += sumX;
-                        else familyCount[sibTrait[sib] - typeOfPhenotype=="polytomous"][whichHaps[0][0][0]] += sumX;
+                    	if (typeOfPhenotype=="quant") familyCount[0][whichHaps[0][0][0]] += sumX;
+                        else { 
+                        	if(typeOfPhenotype=="polytomous") familyCount[sibTrait[sib] - 1][whichHaps[0][0][0]] += sumX;
+                        	else familyCount[sibTrait[sib]][whichHaps[0][0][0]] += sumX;
+                        	}
                     }
                     if (!options.chrX)
                         if (!family.sibship) {
                             familyCount[0][whichHaps[0][1][1]] += sumX;
                         }
                 }
-                if (typeOfPhenotype!="quant") familyCount[0][whichHaps[1][0][0]] += sumX;
-                else familyCount[sibTrait[sib] - typeOfPhenotype=="polytomous"][whichHaps[1][0][0]] += sumX;
+                if (typeOfPhenotype=="quant") familyCount[0][whichHaps[1][0][0]] += sumX;
+                else { 
+                	if(typeOfPhenotype=="polytomous") familyCount[sibTrait[sib] - 1][whichHaps[1][0][0]] += sumX;
+                	else familyCount[sibTrait[sib]][whichHaps[1][0][0]] += sumX;
+                    }
                 if (!family.sibship) {
                     familyCount[0][whichHaps[1][1][1]] += sumX;
                 }
