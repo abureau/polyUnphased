@@ -583,6 +583,7 @@ void UnphasedAnalysis::analysetraits(UnphasedOptions &options, const string &whi
         pheno1 = options.joint[jointcount].substr(0,seppos);
         // Nom du deuxième statut d'affection, après le ":" 
         pheno2 = options.joint[jointcount].substr(seppos+1,options.joint[jointcount].size()-seppos);
+			// Additional debugging code
         /*    if (options.llhd) {
             	cout << "pheno1 " << pheno1;
             	cout << " pheno2 " << pheno2 << endl;

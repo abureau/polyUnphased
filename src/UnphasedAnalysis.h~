@@ -185,6 +185,7 @@ protected:
     vector<double> empiricalDistribution;
     string typeOfPhenotype;
     Haplotype reference;
+    int thisndim;
 
     bool haveFamilies;
     bool haveUnrelateds;

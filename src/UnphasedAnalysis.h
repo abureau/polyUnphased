@@ -157,7 +157,7 @@ protected:
     vector<double> baseline;
 
     // haplotype data
-    valarray<double> familyCount[2], unrelatedCount[2],
+    valarray<double> familyCount[4], unrelatedCount[2],
              frequency, betaparent, alpha, beta,
              chisq, pvalue, stderror;
     double betaparent0, alpha0; // intercepts

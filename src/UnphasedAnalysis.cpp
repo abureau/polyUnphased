@@ -170,6 +170,8 @@ void UnphasedAnalysis::clear1() {
     zero.resize(0);
     familyCount[0].resize(0);
     familyCount[1].resize(0);
+    familyCount[2].resize(0);
+    familyCount[3].resize(0);
     unrelatedCount[0].resize(0);
     unrelatedCount[1].resize(0);
     frequency.resize(0);
@@ -196,9 +198,11 @@ void UnphasedAnalysis::clear1() {
 
 void UnphasedAnalysis::resizeArrays() {
     int size = genoCode.size();
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 4; i++) {
         familyCount[i].resize(size);
         familyCount[i] = 0;
+    }
+    for (int i = 0; i < 2; i++) {
         unrelatedCount[i].resize(size);
         unrelatedCount[i] = 0;
     }
