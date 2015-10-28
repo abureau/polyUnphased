@@ -306,6 +306,11 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
     vector<double> globalGradFamily[2];
     familyCount[0] = 0;
     familyCount[1] = 0;
+    if (typeOfPhenotype == "polytomous")
+	{
+	    familyCount[2] = 0;
+    	familyCount[3] = 0;
+	}    
     for (int nfamily = 0; nfamily < familylist.size(); nfamily++) {
         NuclearFamily *family = &familylist[nfamily];
         if (family->status == "") {
