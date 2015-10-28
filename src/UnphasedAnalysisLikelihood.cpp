@@ -977,7 +977,9 @@ double UnphasedAnalysis::getloglikelihood(const string &title,
     double loglikelihood;
     double maxllhd;
     int size = genoCode.size();
+    int betasize;
     if (typeOfPhenotype == "polytomous") betasize = size*(K-1);
+    else betasize = size;
     valarray<double> bestfreq(size), bestbetaparent(betasize),
              bestalpha(size), bestbeta(betasize);
     valarray<double> bestFamilyCount[4], bestUnrelatedCount[2];
