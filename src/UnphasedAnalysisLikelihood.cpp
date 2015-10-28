@@ -977,11 +977,14 @@ double UnphasedAnalysis::getloglikelihood(const string &title,
     double loglikelihood;
     double maxllhd;
     int size = genoCode.size();
-    valarray<double> bestfreq(size), bestbetaparent(size),
-             bestalpha(size), bestbeta(size);
-    valarray<double> bestFamilyCount[2], bestUnrelatedCount[2];
+    if (typeOfPhenotype == "polytomous") betasize = size*(K-1);
+    valarray<double> bestfreq(size), bestbetaparent(betasize),
+             bestalpha(size), bestbeta(betasize);
+    valarray<double> bestFamilyCount[4], bestUnrelatedCount[2];
     bestFamilyCount[0].resize(size);
     bestFamilyCount[1].resize(size);
+    bestFamilyCount[2].resize(size);
+    bestFamilyCount[3].resize(size);
     bestUnrelatedCount[0].resize(size);
     bestUnrelatedCount[1].resize(size);
     vector<vector<valarray<double> > >
@@ -1031,6 +1034,11 @@ double UnphasedAnalysis::getloglikelihood(const string &title,
             bestbetaparent = betaparent;
             bestFamilyCount[0] = familyCount[0];
             bestFamilyCount[1] = familyCount[1];
+    		if (typeOfPhenotype == "polytomous")
+    		{
+            	bestFamilyCount[2] = familyCount[2];
+            	bestFamilyCount[3] = familyCount[3];
+			}    		 
             bestUnrelatedCount[0] = unrelatedCount[0];
             bestUnrelatedCount[1] = unrelatedCount[1];
             bestalpha = alpha;
@@ -1050,6 +1058,11 @@ double UnphasedAnalysis::getloglikelihood(const string &title,
     betaparent = bestbetaparent;
     familyCount[0] = bestFamilyCount[0];
     familyCount[1] = bestFamilyCount[1];
+    if (typeOfPhenotype == "polytomous")
+    {
+            	familyCount[2] = bestFamilyCount[2];
+            	familyCount[3] = bestFamilyCount[3];
+	}    		 
     unrelatedCount[0] = bestUnrelatedCount[0];
     unrelatedCount[1] = bestUnrelatedCount[1];
     alpha = bestalpha;
