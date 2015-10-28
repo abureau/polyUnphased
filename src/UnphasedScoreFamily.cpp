@@ -1566,6 +1566,14 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
 
             } // for sib
 
+			// Code de débuggage additionnel
+            if (options.llhd) {
+            cout << "Level 1 " << familyCount[0][0] << familyCount[0][1] << endl;
+            cout << "Level 2 " << familyCount[1][0] << familyCount[1][1] << endl;
+            cout << "Level 3 " << familyCount[2][0] << familyCount[2][1] << endl;
+            cout << "Level 4 " << familyCount[3][0] << familyCount[3][1] << endl;
+            }
+
             if (normal) {
                 for (int sib = 0; sib < nsib; sib++) {
                     int theHaps[2][2][2];
