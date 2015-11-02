@@ -1447,10 +1447,12 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                         	else familyCount[(int) sibTrait[sib]][whichHaps[0][0][0]] += sumX;
                         	}
                     }
-                    if (!options.chrX)
+                    if (!options.chrX) {
                         if (!family.sibship) {
-                            familyCount[0][whichHaps[0][1][1]] += sumX;
+                        	if(typeOfPhenotype=="polytomous") familyCount[(int) sibTrait[sib] + 3][whichHaps[0][1][1]] += sumX;
+                        	else familyCount[0][whichHaps[0][1][1]] += sumX;
                         }
+                    }
                 }
                 if (typeOfPhenotype=="quant") familyCount[0][whichHaps[1][0][0]] += sumX;
                 else { 
@@ -1458,7 +1460,8 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                 	else familyCount[(int) sibTrait[sib]][whichHaps[1][0][0]] += sumX;
                     }
                 if (!family.sibship) {
-                    familyCount[0][whichHaps[1][1][1]] += sumX;
+                    if(typeOfPhenotype=="polytomous") familyCount[(int) sibTrait[sib] + 3][whichHaps[1][1][1]] += sumX;
+                	else familyCount[0][whichHaps[1][1][1]] += sumX;
                 }
 
                 // haplotype effects

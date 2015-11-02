@@ -616,9 +616,9 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
         *outStream << endl;
 
         // calculate the frequencies for output
-        double totalFamilyCount[4];
+        double totalFamilyCount[8];
         int nCount = 2;
-        if (typeOfPhenotype == "polytomous") nCount = 4;
+        if (typeOfPhenotype == "polytomous") nCount = 8;
         for (int i = 0; i < nCount; i++) {
             totalFamilyCount[i] = 0;
             for (int j = 0; j < nhap; j++) if (!zero[j]) {
@@ -659,6 +659,34 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                 *outStream << endl;
             }
         }
+    /* Pour le phénotype polytomique, afficher les transmissions aux autres niveaux */
+     if (typeOfPhenotype == "polytomous") {
+    		*outStream << endl;
+            *outStream << setw(12) << "Untrans 1"
+                       << setw(12) << "Untrans 2"
+                       << setw(12) << "Untrans 3"
+                       << setw(12) << "Untrans 4"
+                       << setw(12) << "1-Freq"
+                       << setw(12) << "2-Freq"
+                       << setw(12) << "3-Freq"
+                       << setw(12) << "4-Freq"
+                       ;        
+        for (int i = 0; i < sortedHaps.size(); i++) {
+            int j = sortedHaps[i].index(genoCode);
+            if (!zero[j]) {
+                Haplotype hap = sortedHaps[i];
+                *outStream << setw(haplotypeWidth) << hap.str(options.condition.size()*options.condgenotype, options.genotype, ACGT);
+                    *outStream << setw(11) << round(familyCount[4][j], options.epsilon) << " "
+                               << setw(11) << round(familyCount[5][j], options.epsilon) << " "
+                               << setw(11) << round(familyCount[6][j], options.epsilon) << " "
+                               << setw(11) << round(familyCount[7][j], options.epsilon) << " "
+                               << setw(11) << round(familyCount[4][j] / totalFamilyCount[4], options.epsilon) << " "
+                               << setw(11) << round(familyCount[5][j] / totalFamilyCount[5], options.epsilon) << " "
+                               << setw(11) << round(familyCount[6][j] / totalFamilyCount[6], options.epsilon) << " "
+                               << setw(11) << round(familyCount[7][j] / totalFamilyCount[7], options.epsilon) << " "
+                               ;                     
+     		}
+    		*outStream << endl;       
     }
 
     *outStream << endl;
