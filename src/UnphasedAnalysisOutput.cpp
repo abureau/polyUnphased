@@ -662,6 +662,7 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
     /* Pour le phénotype polytomique, afficher les transmissions aux autres niveaux */
      if (typeOfPhenotype == "polytomous") {
     		*outStream << endl;
+	        *outStream << setw(haplotypeWidth) << (options.genotype ? "Genotype" : (alleles ? "Allele" : "Haplotype"));
             *outStream << setw(12) << "Untrans 1"
                        << setw(12) << "Untrans 2"
                        << setw(12) << "Untrans 3"
