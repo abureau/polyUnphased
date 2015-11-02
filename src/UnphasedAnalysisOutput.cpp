@@ -687,6 +687,7 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                                ;                     
      		}
     		*outStream << endl;       
+    	}
     }
 
     *outStream << endl;
