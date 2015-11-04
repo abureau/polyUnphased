@@ -885,8 +885,8 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                     for (int k = 1; k < K-1; k++) {
                 		thisbeta = beta[j + k*nhap] - beta[refIndex + k*nhap];
 		                *outStream << setw(11) << round(exp(thisbeta), options.epsilon) << " "
-                           		<< setw(11) << round(exp(thisbeta - 1.96 * stderror[j]), options.epsilon) << " "
-                           		<< setw(11) << round(exp(thisbeta + 1.96 * stderror[j]), options.epsilon) << " "
+                           		<< setw(11) << round(exp(thisbeta - 1.96 * stderror[j + k*nhap]), options.epsilon) << " "
+                           		<< setw(11) << round(exp(thisbeta + 1.96 * stderror[j + k*nhap]), options.epsilon) << " "
                            		;
 					}	
 				}
