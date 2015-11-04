@@ -37,6 +37,7 @@
 #include "UnphasedOptions.h"
 #include "UnphasedAnalysis.h"
 #include "pvalues.h"
+#define COMMENT
 
 void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options) {
 #ifdef COMMENT
@@ -120,7 +121,7 @@ void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options) {
       }
     }
 }
-    
+}    
 }
 
 void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& combination, double null, double alternative, int df) {
@@ -441,7 +442,7 @@ void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& comb
                     }
                 }
             }
-	    //    }
+	        }
 }
 
 inline double round(double x, double y) {
