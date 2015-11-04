@@ -120,7 +120,7 @@ void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options) {
       }
     }
 }
-}    
+    
 }
 
 void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& combination, double null, double alternative, int df) {
@@ -441,7 +441,7 @@ void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& comb
                     }
                 }
             }
-	        }
+	    //    }
 }
 
 inline double round(double x, double y) {
