@@ -719,6 +719,7 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
      		}
             if (options.rare && !rare[j]) {
                 *outStream << "+";
+               } 
     		*outStream << endl;       
     	}
     }
