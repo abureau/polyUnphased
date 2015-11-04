@@ -85,6 +85,7 @@ void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options) {
 	      }
 	    }
 	  }
+  }
   } else {
 #endif
  // headers for haplotypes or multiallelic markers - and also SNPs
