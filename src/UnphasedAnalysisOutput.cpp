@@ -119,8 +119,8 @@ void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options) {
 	tabularUnrelateds << right << setw(4) << "CHR" << setw(9) << oneMarker << setw(13) << "BP_START" << setw(13) << "BP_END" << setw(13) << testedObject << setw(13) << "F_ALL" << setw(13) << "CHISQ" << setw(5) << "DF" << setw(13) << "P" << setw(13) << "BETA" << setw(13) << "SE" << setw(13) << "L95" << setw(13) << "U95" << left << endl;
       }
     }
-    //  }
-    
+}
+}    
 }
 
 void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& combination, double null, double alternative, int df) {
@@ -441,7 +441,7 @@ void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& comb
                     }
                 }
             }
-	    //    }
+	        }
 }
 
 inline double round(double x, double y) {
