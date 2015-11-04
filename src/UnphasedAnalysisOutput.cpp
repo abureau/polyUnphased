@@ -211,7 +211,7 @@ void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& comb
 			  tabularFamilies << setw(7) << familyCount[1][liIdx] << setw(7) << familyCount[0][liIdx];
 			  tabularFamilies << setw(13) << lrOdds << setw(13) << exp(log(lrOdds)-1.96*stderror[liIdx]) << setw(13) << exp(log(lrOdds)+1.96*stderror[liIdx]) << setw(13) << lrChi2 << setw(13) << lrP;
 			} else if ("polytomous" == typeOfPhenotype) {
-			  tabularFamilies << setw(7) << familyCount[0][liIdx] << setw(7) << familyCount[4][liIdx] << setw(7) << familyCount[1][liIdx] << setw(7) << familyCount[5][liIdx] << setw(7) << familyCount[2][liIdx] << setw(7) << familyCount[6][liIdx] << setw(7) << familyCount[3][liIdx] << familyCount[7][liIdx] << setw(7);
+			  tabularFamilies << setw(7) << familyCount[0][liIdx] << setw(7) << familyCount[4][liIdx] << setw(7) << familyCount[1][liIdx] << setw(7) << familyCount[5][liIdx] << setw(7) << familyCount[2][liIdx] << setw(7) << familyCount[6][liIdx] << setw(7) << familyCount[3][liIdx]  << setw(7) << familyCount[7][liIdx];
 			  tabularFamilies << setw(13) << lrOdds << setw(13) << exp(log(lrOdds)-1.96*stderror[liIdx]) << setw(13) << exp(log(lrOdds)+1.96*stderror[liIdx]) << setw(13) << lrOdds2 << setw(13) << exp(log(lrOdds2)-1.96*stderror[liIdx + genoCode.size()]) << setw(13) << exp(log(lrOdds2)+1.96*stderror[liIdx + genoCode.size()]) << setw(13) << lrOdds3 << setw(13) << exp(log(lrOdds3)-1.96*stderror[liIdx + 2*genoCode.size()]) << setw(13) << exp(log(lrOdds3)+1.96*stderror[liIdx + 2*genoCode.size()]) << setw(13) << lrChi2 << setw(13) << lrP;
 			} else {
 			  tabularFamilies << setw(7) << familyCount[0][liIdx];
@@ -398,7 +398,7 @@ void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& comb
 			  tabularFamilies << setw(13) << "NA" << setw(5) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA";
 			}
 		      } else if ("polytomous" == typeOfPhenotype) {
-			  tabularFamilies << setw(7) << familyCount[0][liIdx] << setw(7) << familyCount[4][liIdx] << setw(7) << familyCount[1][liIdx] << setw(7) << familyCount[5][liIdx] << setw(7) << familyCount[2][liIdx] << setw(7) << familyCount[6][liIdx] << setw(7) << familyCount[3][liIdx] << familyCount[7][liIdx] << setw(7);
+			  tabularFamilies << setw(7) << familyCount[0][liIdx]/laTotalFamilyCount[0] << setw(7) << familyCount[4][liIdx]/laTotalFamilyCount[4] << setw(7) << familyCount[1][liIdx]/laTotalFamilyCount[1] << setw(7) << familyCount[5][liIdx]/laTotalFamilyCount[5] << setw(7) << familyCount[2][liIdx]/laTotalFamilyCount[2] << setw(7) << familyCount[6][liIdx]/laTotalFamilyCount[6] << setw(7) << familyCount[3][liIdx]  << setw(7) << familyCount[7][liIdx]/laTotalFamilyCount[7];
 			  tabularFamilies << setw(13) << "NA" << setw(5) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA";
 		      }
 		      else {
