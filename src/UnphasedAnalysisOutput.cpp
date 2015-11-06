@@ -44,8 +44,10 @@ void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options) {
   // headers for SNPs
   // not much use in a file with a mixture of SNPs and multiallelic markers
   // Code de débuggage
-  cout << "window " << options.window << " genoCode.size " << genoCode.size() << endl;
-  if (1 == options.window && (genoCode.size() + ! options.genotype == 3)) {
+  //cout << "window " << options.window << " genoCode.size " << genoCode.size() << endl;
+  //if (1 == options.window && (genoCode.size() + ! options.genotype == 3)) {
+  // contournement d'un bug d'Unphased
+  if (1 == options.window && ! options.genotype) {
 	  // binary traits
 	  if ("binary" == typeOfPhenotype) { // binary trait headers
             if (haveFamilies) {
