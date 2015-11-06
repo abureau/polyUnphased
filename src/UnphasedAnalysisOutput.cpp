@@ -43,6 +43,8 @@ void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options) {
 #ifdef COMMENT
   // headers for SNPs
   // not much use in a file with a mixture of SNPs and multiallelic markers
+  // Code de débuggage
+  cout << "window " << options.window << " genoCode.size " << genoCode.size() << endl;
   if (1 == options.window && (genoCode.size() + ! options.genotype == 3)) {
 	  // binary traits
 	  if ("binary" == typeOfPhenotype) { // binary trait headers
