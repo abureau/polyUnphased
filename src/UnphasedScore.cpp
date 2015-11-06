@@ -113,7 +113,30 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
                         }
                     }
                 }
+       if (typeOfPhenotype == "polytomous") {
+			for (int h = 1; h < K-1; h++) {
+			    vector<double> vv(freeParameters(options), 0);
+                gradientFreeParameters(variance[j + h*nhap], vv, options);
+                if (options.model != "commonmain" ||
+                        i == 0 && options.condition.size() > 0) {
+                    if (group[i][j] < group[i][refIndex])
+                        for (int k = 0; k < v.size(); k++) {
+                            v[group[i][j] + ndim[i] + h*thisndim][k] += vv[k];
+                        }
+                    if (group[i][j] > group[i][refIndex])
+                        for (int k = 0; k < v.size(); k++) {
+                            v[group[i][j] + ndim[i] - 1 + h*thisndim][k] += vv[k];
+                        }
+                } else {
+                    if (group[i][j] != group[i][refIndex]) {
+                        for (int k = 0; k < v.size(); k++) {
+                            v[ndim[options.condition.size()>0] + h*thisndim][k] += vv[k];
+                        }
+                    }
+                }
             }
+        }
+        }
     int ix = v.size() - 1;
     int iy = betasize;
     // frequency
@@ -127,13 +150,13 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
             if (!zero[i] && i != refIndex) {
                 if (typeOfPhenotype == "polytomous") {
                     for (int k = 0; k < K-1; k++)
-                        gradientFreeParameters(variance[i+iy + k*nhap], v[ix - (K-2-k)*nhap], options);
+                        gradientFreeParameters(variance[i+iy + k*nhap], v[ix - (K-2-k)*thisndim], options);
                     }
                 else gradientFreeParameters(variance[i+iy], v[ix], options);
                 ix--;
             }
 	    if (typeOfPhenotype == "polytomous") {
-	    	ix -= nhap*(K-2);
+	    	ix -= thisndim*(K-2);
 	    	}
     	iy += betasize;
         if (haveBetaParent0(options)) {
