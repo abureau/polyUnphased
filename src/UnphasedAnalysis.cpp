@@ -600,7 +600,7 @@ void UnphasedAnalysis::analysetraits(UnphasedOptions &options, const string &whi
         typeOfPhenotype = "quant";
         analysemarkers(options, which, options.trait[traitcount], dumpfile);
     }
-    if (options.disease.size() == 0 && options.trait.size() == 0) {
+    if (options.disease.size() == 0 && options.trait.size() == 0 && options.joint.size() == 0) {
         // default analysis is the first disease
         // if none found, the first trait
         int i = 0;
