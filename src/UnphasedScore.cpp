@@ -533,12 +533,15 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
 void UnphasedAnalysis::numericalHessian(UnphasedOptions &options, vector<vector<double> > &v, vector<double> &g, double llhd) {
     const double epsilon = 1e-8;
     int nhap = genoCode.size();
+    int betasize;
+    if (typeOfPhenotype == "polytomous") betasize = nhap*(K-1);
+    else betasize = nhap;
 
     // working score vectors
     vector<double> gradient(g.size(), 0);
 
     int ix = 0;
-    for (int i = 0; i < nhap; ix++, i++) if (!zero[i]) {
+    for (int i = 0; i < betasize; ix++, i++) if (!zero[i%nhap]) {
             beta[i] += epsilon;
             if (options.hhrr) {
                 betaparent[i] = beta[i];
@@ -569,7 +572,7 @@ void UnphasedAnalysis::numericalHessian(UnphasedOptions &options, vector<vector<
         }
 
     if (haveBetaParent(options)) {
-        for (int i = 0; i < nhap; ix++, i++) if (!zero[i]) {
+        for (int i = 0; i < betasize; ix++, i++) if (!zero[i%nhap]) {
                 betaparent[i] += epsilon;
                 for (int j = 0; j < gradient.size(); j++) {
                     gradient[j] = 0;
