@@ -32,7 +32,6 @@ using namespace std;
 #ifndef __LINKAGEDATA__
 
 // Number of levels of polytomous outcome
-vector <int> Kvec;
 const int K = 4;
 const int AFFECTED = 2;
 const int UNAFFECTED = 1;

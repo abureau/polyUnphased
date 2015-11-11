@@ -187,7 +187,7 @@ protected:
     bool polypheno;
     Haplotype reference;
     int thisndim;
-//    vector <int> Kvec;
+    vector <int> Kvec;
 
     bool haveFamilies;
     bool haveUnrelateds;
