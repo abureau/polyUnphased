@@ -50,7 +50,7 @@ void LinkageData::readpedfile(string &filename) {
     }
     *outStream << "Reading pedigree file " << filename << "..." << flush;
 
-	Kvec = 2;
+	Kvec.resize(nlocus, 2);
     string line;
     while ((line = getline(infile)) != "") {
         Subject subject;

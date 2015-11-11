@@ -360,7 +360,7 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
                 } */
 					if (polypheno) {
 					// Les inconnus sont mis dans la catégorie de référence, comme pour les traits dichotomiques
-						if (family->sibs[sib].affection[currentphenotype] == 0) sibTrait.push_back(K);
+						if (family->sibs[sib].affection[currentphenotype] == 0) sibTrait.push_back(K-1);
                         else sibTrait.push_back(family->sibs[sib].affection[currentphenotype]);					
 					}
 					else {
@@ -468,12 +468,19 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
             if (typeOfPhenotype == "quant") {
                 subjectTrait = unrelateds[permuteUnrelated[nsubject]].trait[currentphenotype];
             } else if (typeOfPhenotype == "polytomous") {
+					if (polypheno) {
+					// Les inconnus sont mis dans la catégorie de référence, comme pour les traits dichotomiques
+						if (unrelateds[permuteUnrelated[nsubject]].trait[currentphenotype] == 0) subjectTrait = K-1;
+                        else subjectTrait = unrelateds[permuteUnrelated[nsubject]].trait[currentphenotype];				
+					}
+					else {
             	if (unrelateds[permuteUnrelated[nsubject]].affection[currentphenotype] == AFFECTED) {
             		if (unrelateds[permuteUnrelated[nsubject]].affection[currentphenotype2] == AFFECTED) subjectTrait = 3;
             		else subjectTrait = 1;
             		} else { if (unrelateds[permuteUnrelated[nsubject]].affection[currentphenotype2] == AFFECTED) subjectTrait = 2;
             					else subjectTrait = 4;
             					}
+            	}
             	}
             else {
                 subjectTrait = (unrelateds[permuteUnrelated[nsubject]].affection[currentphenotype] == AFFECTED);
