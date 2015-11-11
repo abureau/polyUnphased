@@ -32,6 +32,7 @@
 #include "stl.h"
 #include "LinkageData.h"
 #include "getline.h"
+#include "UnphasedAnalysis.h"
 
 LinkageData::LinkageData(ostream *os = &cout) {
     outStream = os;
@@ -170,7 +171,8 @@ void LinkageData::readpedfile(string &filename) {
         pedigree[name].push_back(subject);
 
     } // while line
-    *outStream << "done" << endl;
+//    *outStream << "done" << endl;
+    *outStream << "done " << Kvec[0] << " " << Kvec[1] << endl;
 }
 
 
