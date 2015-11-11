@@ -352,7 +352,8 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
                     // trait value
                     if (typeOfPhenotype == "quant") {
                         sibTrait.push_back(family->sibs[sib].trait[currentphenotype]);
-                    } else if (typeOfPhenotype == "polytomous") {
+                    } else {
+                    if (typeOfPhenotype == "polytomous") {
 			// Additional debugging code
             /* if (options.llhd) {
             	cout << "pheno1 " << family->sibs[sib].affection[currentphenotype];
@@ -371,6 +372,7 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
                     	 				else phenoval = 4;
                     	 				}
                     	sibTrait.push_back(phenoval); 		
+                    	}
                     	} else {                    	
                         sibTrait.push_back(family->sibs[sib].affection[currentphenotype] == AFFECTED);
                     }
