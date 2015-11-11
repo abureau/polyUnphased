@@ -32,7 +32,6 @@
 #include "stl.h"
 #include "LinkageData.h"
 #include "getline.h"
-#include "UnphasedAnalysis.h"
 
 LinkageData::LinkageData(ostream *os = &cout) {
     outStream = os;
