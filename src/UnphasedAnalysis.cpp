@@ -578,6 +578,13 @@ void UnphasedAnalysis::analysetraits(UnphasedOptions &options, const string &whi
         typeOfPhenotype = "binary";
         analysemarkers(options, which, options.disease[diseasecount], dumpfile);
     }
+    for (int polycount = 0; polycount < options.polytomous.size(); polycount++) {
+        currentphenotype = diseasehash[options.disease[polycount]];
+        typeOfPhenotype = "polytomous";
+        polypheno = true;
+//        K = Kvec[currentphenotype];
+        analysemarkers(options, which, options.polytomous[polycount], dumpfile);
+        }    
     for (int jointcount = 0; jointcount < options.joint.size(); jointcount++) {
         // Extraire les noms de statut d'affection de options.joint[jointcount]
         // Nom du premier statut d'affection, avant le ":"
@@ -593,6 +600,8 @@ void UnphasedAnalysis::analysetraits(UnphasedOptions &options, const string &whi
         currentphenotype = diseasehash[pheno1];
         currentphenotype2 = diseasehash[pheno2];
         typeOfPhenotype = "polytomous";
+        polypheno = false;
+//        K = 4;
         analysemarkers(options, which, options.joint[jointcount], dumpfile);
     }
     for (int traitcount = 0; traitcount < options.trait.size(); traitcount++) {

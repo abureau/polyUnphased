@@ -358,6 +358,12 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
             	cout << "pheno1 " << family->sibs[sib].affection[currentphenotype];
             	cout << " pheno2 " << family->sibs[sib].affection[currentphenotype2] << endl;
                 } */
+					if (polypheno) {
+					// Les inconnus sont mis dans la catégorie de référence, comme pour les traits dichotomiques
+						if (family->sibs[sib].affection[currentphenotype] == 0) sibTrait.push_back(K);
+                        else sibTrait.push_back(family->sibs[sib].affection[currentphenotype]);					
+					}
+					else {
                     	if (family->sibs[sib].affection[currentphenotype] == AFFECTED) {
                     	 	if (family->sibs[sib].affection[currentphenotype2] == AFFECTED) phenoval = 3;
                     	 	else phenoval = 1;
@@ -367,6 +373,7 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
                     	sibTrait.push_back(phenoval); 		
                     	} else {                    	
                         sibTrait.push_back(family->sibs[sib].affection[currentphenotype] == AFFECTED);
+                    }
                     }
                     // sex
                     sibSex.push_back(family->sibs[sib].sex);

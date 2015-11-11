@@ -50,6 +50,7 @@ void LinkageData::readpedfile(string &filename) {
     }
     *outStream << "Reading pedigree file " << filename << "..." << flush;
 
+	Kvec = 2;
     string line;
     while ((line = getline(infile)) != "") {
         Subject subject;
@@ -118,6 +119,17 @@ void LinkageData::readpedfile(string &filename) {
                     exit(-1);
                 }
                 //subject.affection.insert(make_pair(locus[i].name,atoi(buf)));
+                // Determine number of levels of the phenotype (assuming all levels are represented)
+                if ((int) atoi(buf) > 4) {
+                    *outStream << "\nPedigree file error: value > 4 for an affection locus: " << locus[i].name.c_str() << endl;
+                    exit(-1);
+                }
+                if ((int) atoi(buf) > 4) {
+                    *outStream << "\nPedigree file error: negative value for an affection locus: " << locus[i].name.c_str() << endl;
+                    exit(-1);
+                }
+                // Déterminer la valeur maximale du phénotype dans Kvec
+                if ((int) atoi(buf) > Kvec[i]) Kvec[i] = (int) atoi(buf);
                 subject.affection.push_back(atoi(buf));
                 break;
             }

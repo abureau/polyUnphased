@@ -184,8 +184,10 @@ protected:
     int multipleTests;
     vector<double> empiricalDistribution;
     string typeOfPhenotype;
+    bool polypheno;
     Haplotype reference;
     int thisndim;
+    vector <int> Kvec;
 
     bool haveFamilies;
     bool haveUnrelateds;
