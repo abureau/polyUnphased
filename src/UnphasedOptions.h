@@ -37,6 +37,7 @@ public:
     vector<string> tag;
     vector<string> trait;
     vector<string> disease;
+    vector<string> polytomous;
     vector<string> joint;
     vector<string> confounder;
     vector<string> modifier;
