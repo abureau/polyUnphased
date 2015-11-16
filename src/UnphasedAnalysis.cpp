@@ -579,7 +579,7 @@ void UnphasedAnalysis::analysetraits(UnphasedOptions &options, const string &whi
         analysemarkers(options, which, options.disease[diseasecount], dumpfile);
     }
     for (int polycount = 0; polycount < options.polytomous.size(); polycount++) {
-        currentphenotype = diseasehash[options.disease[polycount]];
+        currentphenotype = diseasehash[options.polytomous[polycount]];
         typeOfPhenotype = "polytomous";
         polypheno = true;
 //        K = Kvec[currentphenotype];
@@ -609,7 +609,7 @@ void UnphasedAnalysis::analysetraits(UnphasedOptions &options, const string &whi
         typeOfPhenotype = "quant";
         analysemarkers(options, which, options.trait[traitcount], dumpfile);
     }
-    if (options.disease.size() == 0 && options.trait.size() == 0 && options.joint.size() == 0) {
+    if (options.disease.size() == 0 && options.trait.size() == 0 && options.joint.size() == 0 && options.polytomous.size() == 0) {
         // default analysis is the first disease
         // if none found, the first trait
         int i = 0;
