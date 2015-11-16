@@ -582,7 +582,7 @@ void UnphasedAnalysis::analysetraits(UnphasedOptions &options, const string &whi
         currentphenotype = diseasehash[options.polytomous[polycount]];
         typeOfPhenotype = "polytomous";
         polypheno = true;
-//        K = Kvec[currentphenotype];
+        K = Kvec[currentphenotype];
         analysemarkers(options, which, options.polytomous[polycount], dumpfile);
         }    
     for (int jointcount = 0; jointcount < options.joint.size(); jointcount++) {
@@ -601,7 +601,7 @@ void UnphasedAnalysis::analysetraits(UnphasedOptions &options, const string &whi
         currentphenotype2 = diseasehash[pheno2];
         typeOfPhenotype = "polytomous";
         polypheno = false;
-//        K = 4;
+        K = 4;
         analysemarkers(options, which, options.joint[jointcount], dumpfile);
     }
     for (int traitcount = 0; traitcount < options.trait.size(); traitcount++) {
