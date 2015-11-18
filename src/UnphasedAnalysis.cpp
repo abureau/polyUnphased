@@ -580,6 +580,7 @@ void UnphasedAnalysis::analysetraits(UnphasedOptions &options, const string &whi
     }
     for (int polycount = 0; polycount < options.polytomous.size(); polycount++) {
         currentphenotype = diseasehash[options.polytomous[polycount]];
+        currentphenotype2 = -1;
         typeOfPhenotype = "polytomous";
         polypheno = true;
         K = Kvec[currentphenotype];

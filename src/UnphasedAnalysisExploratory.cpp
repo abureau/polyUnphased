@@ -304,7 +304,8 @@ void UnphasedAnalysis::findUsableSubjects(UnphasedOptions &options) {
                     usesib = usesib && !family->sibs[sib].missingtrait[currentphenotype];
                 } else {
                     usesib = usesib && family->sibs[sib].affection[currentphenotype] != UNSURE;
-                    if (typeOfPhenotype == "polytomous") {
+                    // On considère currentphenotype2 seulement si l'option joint est spécifiée
+                    if (typeOfPhenotype == "polytomous" && currentphenotype2>=0) {
 	                    usesib = usesib && family->sibs[sib].affection[currentphenotype2] != UNSURE; 
 	                }                       
                 }
