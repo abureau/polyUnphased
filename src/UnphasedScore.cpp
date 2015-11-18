@@ -331,7 +331,7 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
     familyCount[1] = 0;
     if (typeOfPhenotype == "polytomous")
 	{
-		for (int i = 2; i < 8; i++)
+		for (int i = 2; i < 2*K; i++)
 	    	familyCount[i] = 0;
 	}    
     for (int nfamily = 0; nfamily < familylist.size(); nfamily++) {

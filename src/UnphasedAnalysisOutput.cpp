@@ -227,7 +227,7 @@ void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& comb
 			  tabularFamilies << setw(13) << lrOdds[0] << setw(13) << exp(log(lrOdds[0])-1.96*stderror[liIdx]) << setw(13) << exp(log(lrOdds[0])+1.96*stderror[liIdx]) << setw(13) << lrChi2 << setw(13) << lrP;
 			} else if ("polytomous" == typeOfPhenotype) {
 			  for (int k = 0; k < K; k++)
-			  	tabularFamilies << setw(7) << familyCount[k][liIdx] << setw(7) << familyCount[k+4][liIdx] ;
+			  	tabularFamilies << setw(7) << familyCount[k][liIdx] << setw(7) << familyCount[k+K][liIdx] ;
               for (int k = 0; k < K-1; k++)	
 			  	tabularFamilies << setw(13) << lrOdds[k] << setw(13) << exp(log(lrOdds[k])-1.96*stderror[liIdx + k*genoCode.size()]) << setw(13) << exp(log(lrOdds[k])+1.96*stderror[liIdx + k*genoCode.size()]);
 			  tabularFamilies << setw(13) << lrChi2 << setw(13) << lrP;
@@ -417,7 +417,7 @@ void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& comb
 			}
 		      } else if ("polytomous" == typeOfPhenotype) {
 			  for (int k = 0; k < K; k++)
-			  	tabularFamilies << setw(7) << familyCount[k][liIdx]/laTotalFamilyCount[k] << setw(7) << familyCount[k+4][liIdx]/laTotalFamilyCount[k+4] ;
+			  	tabularFamilies << setw(7) << familyCount[k][liIdx]/laTotalFamilyCount[k] << setw(7) << familyCount[k+K][liIdx]/laTotalFamilyCount[k+K] ;
 			  tabularFamilies << setw(13) << "NA" << setw(5) << "NA" << setw(13) << "NA" ;
 			  for (int k = 0; k < K-1; k++)
 				tabularFamilies << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" ;
