@@ -643,6 +643,7 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                        << setw(12) << "Freq"
                        ;
         else { if (typeOfPhenotype == "polytomous")
+        	{
             *outStream << setw(12) << "Trans 1"
                        << setw(12) << "Trans 2";
             if (K > 2) {
@@ -656,7 +657,8 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
             *outStream << setw(12) << "3-Freq";
             if (K == 4)
             *outStream << setw(12) << "4-Freq";
-                       }        
+                       }
+            }        
         else
             *outStream << setw(12) << "Trans"
                        << setw(12) << "Untrans"
@@ -707,6 +709,7 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                     *outStream << setw(11) << round(familyCount[2][j] / totalFamilyCount[2], options.epsilon) << " ";
                     if (K == 4)
                     *outStream << setw(11) << round(familyCount[3][j] / totalFamilyCount[3], options.epsilon) << " ";
+					}
 					}                                               
                 else
                     *outStream << setw(11) << round(familyCount[0][j], options.epsilon) << " "
