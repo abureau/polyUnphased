@@ -70,7 +70,11 @@ void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options) {
 	  	// polytomous trait headers
             if (haveFamilies) {
 	      if (! options.genotype) {
-	      tabularFamilies << right << setw(4) << "CHR" << setw(12) << "SNP" << setw(13) << "BP" << setw(4) << "A1" << setw(4) << "A2" << setw(7) <<"T1" << setw(7) << "U1" << setw(7) <<"T2" << setw(7) << "U2" << setw(7) <<"T3" << setw(7) << "U3" << setw(7) <<"T4" << setw(7) << "U4" << setw(13) << "OR1" << setw(13) << "L95_1" << setw(13) << "U95_1" << setw(13) << "OR2" << setw(13) << "L95_2" << setw(13) << "U95_2" << setw(13) << "OR3" << setw(13) << "L95_3" << setw(13) << "U95_3" << setw(13) << "CHISQ" << setw(13) << "P" << left << endl;
+	      tabularFamilies << right << setw(4) << "CHR" << setw(12) << "SNP" << setw(13) << "BP"  << setw(4) << "A1" << setw(4) << "A2" ;
+          for (int k = 1; k <= K; k++)	
+	      	tabularFamilies	<< setw(7) << "T" << k << setw(7) << "U" << k ;
+          for (int k = 1; k <= K-1; k++)	
+	      	tabularFamilies << setw(13) << "OR" << k << setw(13) << "SE" << k << setw(13) << "L95_" << k << setw(13) << "U95_" << k; 
 	      }
 	    }
 	    } else {	  	 
@@ -112,7 +116,13 @@ void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options) {
 	  	// polytomous trait headers
             if (haveFamilies) {
 	      if (! options.genotype) {
-	      tabularFamilies << right << setw(4) << "CHR" << setw(9) << oneMarker << setw(13) << "BP_START" << setw(13) << "BP_END" << setw(13) << testedObject << setw(13)  <<"F1_A" << setw(7) << "F1_U" << setw(7) <<"F2_A" << setw(7) << "F2_U" << setw(7) <<"F3_A" << setw(7) << "F3_U" << setw(7) <<"F4_A" << setw(7) << "F4_U" << setw(13) << "CHISQ" << setw(5) << "DF" << setw(13) << "P" << setw(13) << "OR1" << setw(13) << "SE1" << setw(13) << "L95_1" << setw(13) << "U95_1" << setw(13) << "OR2" << setw(13) << "SE2" << setw(13) << "L95_2" << setw(13) << "U95_2" << setw(13) << "OR3" << setw(13) << "SE3" << setw(13) << "L95_3" << setw(13) << "U95_3" << left << endl;
+	      tabularFamilies << right << setw(4) << "CHR" << setw(9) << oneMarker << setw(13) << "BP_START" << setw(13) << "BP_END" << setw(13) << testedObject 
+	      for (int k = 1; k <= K; k++)	
+	      	tabularFamilies << setw(13) << "F" << k << "_A" << setw(7) << "F", k, "_U"; 
+	      tabularFamilies << setw(13) << "CHISQ" << setw(5) << "DF" << setw(13) << "P";
+          for (int k = 1; k <= K-1; k++)	
+	      	tabularFamilies << setw(13) << "OR" << k << setw(13) << "SE" << k << setw(13) << "L95_" << k << setw(13) << "U95_" << k; 
+	      tabularFamilies << left << endl;
 	      }
 	    }
 	    } else {
@@ -130,7 +140,7 @@ void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options) {
 
 void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& combination, double null, double alternative, int df) {
     int     i, j, liIdx, liRef;
-    double  laTotalFamilyCount[8] = {0, 0, 0, 0, 0, 0, 0, 0}, laTotalUnrelatedCount[2] = {0, 0}, lrFU, lrFA, lrExpected, lrChi2, lrP, lrOdds, lrOdds2, lrOdds3, lrBeta, lrT, lrR2;
+    double  laTotalFamilyCount[8] = {0, 0, 0, 0, 0, 0, 0, 0}, laTotalUnrelatedCount[2] = {0, 0}, lrFU, lrFA, lrExpected, lrChi2, lrP, lrOdds[3], lrBeta, lrT, lrR2;
     string  lsHap1, lsHap2;
     stringstream lsMarker, lsRatios;
     Locus   loLocus1, loLocus2;
@@ -142,7 +152,7 @@ void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& comb
 
     //  Calculate the total frequencies.
     int nCount = 2;
-    if (typeOfPhenotype == "polytomous") nCount = 8;
+    if (typeOfPhenotype == "polytomous") nCount = 2*K;
     for (j = 0; j < genoCode.size(); j++) {
             if (!zero[j]) {
     		for (i = 0; i < nCount; i++) 
@@ -201,11 +211,12 @@ void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& comb
                         lrChi2 = 2 * (alternative - null);
                         lrP    = pochisq(2 * (alternative - null), df);
                     }
-                    lrOdds = exp(beta[liIdx] - beta[liRef]);
+                    
                     if ("polytomous" == typeOfPhenotype) {
-                    	lrOdds2 = exp(beta[liIdx + genoCode.size()] - beta[liRef + genoCode.size()]);
-                    	lrOdds3 = exp(beta[liIdx + 2*genoCode.size()] - beta[liRef + 2*genoCode.size()]);
+                        for (int k = 0; k < K-1; k++)
+                    		lrOdds[k] = exp(beta[liIdx + k*genoCode.size()] - beta[liRef + k*genoCode.size()]);
                     	}
+                    else lrOdds[0] = exp(beta[liIdx] - beta[liRef]);
 		    lrBeta = beta[liIdx] - beta[liRef];
 		    // allele tests in families
                     if (haveFamilies) {
@@ -213,10 +224,13 @@ void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& comb
                         tabularFamilies << setw(4) << loLocus1.chromosome << setw(12) << lsMarker.str() << setw(13) << loLocus1.position << setw(4) << lsHap1 << setw(4) << lsHap2;
 			if ("binary" == typeOfPhenotype) {
 			  tabularFamilies << setw(7) << familyCount[1][liIdx] << setw(7) << familyCount[0][liIdx];
-			  tabularFamilies << setw(13) << lrOdds << setw(13) << exp(log(lrOdds)-1.96*stderror[liIdx]) << setw(13) << exp(log(lrOdds)+1.96*stderror[liIdx]) << setw(13) << lrChi2 << setw(13) << lrP;
+			  tabularFamilies << setw(13) << lrOdds[0] << setw(13) << exp(log(lrOdds[0])-1.96*stderror[liIdx]) << setw(13) << exp(log(lrOdds[0])+1.96*stderror[liIdx]) << setw(13) << lrChi2 << setw(13) << lrP;
 			} else if ("polytomous" == typeOfPhenotype) {
-			  tabularFamilies << setw(7) << familyCount[0][liIdx] << setw(7) << familyCount[4][liIdx] << setw(7) << familyCount[1][liIdx] << setw(7) << familyCount[5][liIdx] << setw(7) << familyCount[2][liIdx] << setw(7) << familyCount[6][liIdx] << setw(7) << familyCount[3][liIdx]  << setw(7) << familyCount[7][liIdx];
-			  tabularFamilies << setw(13) << lrOdds << setw(13) << exp(log(lrOdds)-1.96*stderror[liIdx]) << setw(13) << exp(log(lrOdds)+1.96*stderror[liIdx]) << setw(13) << lrOdds2 << setw(13) << exp(log(lrOdds2)-1.96*stderror[liIdx + genoCode.size()]) << setw(13) << exp(log(lrOdds2)+1.96*stderror[liIdx + genoCode.size()]) << setw(13) << lrOdds3 << setw(13) << exp(log(lrOdds3)-1.96*stderror[liIdx + 2*genoCode.size()]) << setw(13) << exp(log(lrOdds3)+1.96*stderror[liIdx + 2*genoCode.size()]) << setw(13) << lrChi2 << setw(13) << lrP;
+			  for (int k = 0; k < K; k++)
+			  	tabularFamilies << setw(7) << familyCount[k][liIdx] << setw(7) << familyCount[k+4][liIdx] ;
+              for (int k = 0; k < K-1; k++)	
+			  	tabularFamilies << setw(13) << lrOdds[k] << setw(13) << exp(log(lrOdds[k])-1.96*stderror[liIdx + k*genoCode.size()]) << setw(13) << exp(log(lrOdds[k])+1.96*stderror[liIdx + k*genoCode.size()]);
+			  tabularFamilies << setw(13) << lrChi2 << setw(13) << lrP;
 			} else {
 			  tabularFamilies << setw(7) << familyCount[0][liIdx];
 			  tabularFamilies << setw(13) << lrBeta << setw(13) << stderror[liIdx] << setw(13) << lrBeta-1.96*stderror[liIdx] << setw(13) << lrBeta+1.96*stderror[liIdx] << setw(13) << lrChi2 << setw(13) << lrP;
@@ -232,7 +246,7 @@ void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& comb
 			  tabularUnrelateds << setw(13) << (unrelatedCount[1][liIdx] / laTotalUnrelatedCount[1]);
 			  tabularUnrelateds << setw(13) << (unrelatedCount[0][liIdx] / laTotalUnrelatedCount[0]);
 			  tabularUnrelateds << setw(4) << lsHap2;
-			  tabularUnrelateds << setw(13) << lrChi2 << setw(13) << lrP << setw(13) << lrOdds << setw(13) << stderror[liIdx] << setw(13) << exp(log(lrOdds)-1.96*stderror[liIdx]) << setw(13) << exp(log(lrOdds)+1.96*stderror[liIdx]);
+			  tabularUnrelateds << setw(13) << lrChi2 << setw(13) << lrP << setw(13) << lrOdds[0] << setw(13) << stderror[liIdx] << setw(13) << exp(log(lrOdds[0])-1.96*stderror[liIdx]) << setw(13) << exp(log(lrOdds[0])+1.96*stderror[liIdx]);
 			} else {
 			  tabularUnrelateds << setw(13) << (unrelatedCount[0][liIdx] / laTotalUnrelatedCount[0]);
 			  tabularUnrelateds << setw(4) << lsHap2;
@@ -377,11 +391,11 @@ void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& comb
 		      //lrChi2 = 2 * (alternative - null);
 		      //lrP    = pochisq(2 * (alternative - null), df);
                     }
-                    lrOdds = exp(beta[liIdx] - beta[liRef]);
                if ("polytomous" == typeOfPhenotype) {
-                    	lrOdds2 = exp(beta[liIdx + genoCode.size()] - beta[liRef + genoCode.size()]);
-                    	lrOdds3 = exp(beta[liIdx + 2*genoCode.size()] - beta[liRef + 2*genoCode.size()]);
+                        for (int k = 0; k < K-1; k++)
+                    		lrOdds[k] = exp(beta[liIdx + k*genoCode.size()] - beta[liRef + k*genoCode.size()]);
                     	}
+                    else lrOdds[0] = exp(beta[liIdx] - beta[liRef]);
 			    lrBeta = beta[liIdx] - beta[liRef];
 		    if (haveFamilies) {
 		      if (0 == i) {
@@ -397,13 +411,16 @@ void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& comb
 		      if ("binary" == typeOfPhenotype) {
 			tabularFamilies << setw(13) << familyCount[1][liIdx]/laTotalFamilyCount[1] << setw(13) << familyCount[0][liIdx]/laTotalFamilyCount[0];
 			if (options.individual) {
-			  tabularFamilies << setw(13) << lrChi2 << setw(5) << 1 << setw(13) << lrP << setw(13) << lrOdds << setw(13) << stderror[liIdx] << setw(13) << exp(log(lrOdds)-1.96*stderror[liIdx]) << setw(13) << exp(log(lrOdds)+1.96*stderror[liIdx]);
+			  tabularFamilies << setw(13) << lrChi2 << setw(5) << 1 << setw(13) << lrP << setw(13) << lrOdds[0] << setw(13) << stderror[liIdx] << setw(13) << exp(log(lrOdds[0])-1.96*stderror[liIdx]) << setw(13) << exp(log(lrOdds[0])+1.96*stderror[liIdx]);
 			} else {
 			  tabularFamilies << setw(13) << "NA" << setw(5) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA";
 			}
 		      } else if ("polytomous" == typeOfPhenotype) {
-			  tabularFamilies << setw(7) << familyCount[0][liIdx]/laTotalFamilyCount[0] << setw(7) << familyCount[4][liIdx]/laTotalFamilyCount[4] << setw(7) << familyCount[1][liIdx]/laTotalFamilyCount[1] << setw(7) << familyCount[5][liIdx]/laTotalFamilyCount[5] << setw(7) << familyCount[2][liIdx]/laTotalFamilyCount[2] << setw(7) << familyCount[6][liIdx]/laTotalFamilyCount[6] << setw(7) << familyCount[3][liIdx]  << setw(7) << familyCount[7][liIdx]/laTotalFamilyCount[7];
-			  tabularFamilies << setw(13) << "NA" << setw(5) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA";
+			  for (int k = 0; k < K; k++)
+			  	tabularFamilies << setw(7) << familyCount[k][liIdx]/laTotalFamilyCount[k] << setw(7) << familyCount[k+4][liIdx]/laTotalFamilyCount[k+4] ;
+			  tabularFamilies << setw(13) << "NA" << setw(5) << "NA" << setw(13) << "NA" 
+			  for (int k = 0; k < K-1; k++)
+				tabularFamilies << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" ;
 		      }
 		      else {
 			tabularFamilies << setw(13) << familyCount[0][liIdx]/laTotalFamilyCount[0];
@@ -430,7 +447,7 @@ void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& comb
 			  tabularUnrelateds << setw(13) << (unrelatedCount[1][liIdx] / laTotalUnrelatedCount[1])
 					      << setw(13) << (unrelatedCount[0][liIdx] / laTotalUnrelatedCount[0]);
 			  if (options.individual) {
-			    tabularUnrelateds << setw(13) << lrChi2 << setw(5) << "1" << setw(13) << lrP << setw(13) << lrOdds << setw(13) << stderror[liIdx] << setw(13) << exp(log(lrOdds)-1.96*stderror[liIdx]) << setw(13) << exp(log(lrOdds)+1.96*stderror[liIdx]);
+			    tabularUnrelateds << setw(13) << lrChi2 << setw(5) << "1" << setw(13) << lrP << setw(13) << lrOdds[0] << setw(13) << stderror[liIdx] << setw(13) << exp(log(lrOdds[0])-1.96*stderror[liIdx]) << setw(13) << exp(log(lrOdds[0])+1.96*stderror[liIdx]);
 			  } else {
 			    tabularUnrelateds << setw(13) << "NA" << setw(5) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA";
 			  }
@@ -627,14 +644,19 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                        ;
         else { if (typeOfPhenotype == "polytomous")
             *outStream << setw(12) << "Trans 1"
-                       << setw(12) << "Trans 2"
-                       << setw(12) << "Trans 3"
-                       << setw(12) << "Trans 4"
-                       << setw(12) << "1-Freq"
-                       << setw(12) << "2-Freq"
-                       << setw(12) << "3-Freq"
-                       << setw(12) << "4-Freq"
-                       ;        
+                       << setw(12) << "Trans 2";
+            if (K > 2) {
+            *outStream << setw(12) << "Trans 3";
+            if (K == 4)
+            *outStream << setw(12) << "Trans 4";
+                       }
+            *outStream << setw(12) << "1-Freq"
+                       << setw(12) << "2-Freq";
+            if (K > 2) {
+            *outStream << setw(12) << "3-Freq";
+            if (K == 4)
+            *outStream << setw(12) << "4-Freq";
+                       }        
         else
             *outStream << setw(12) << "Trans"
                        << setw(12) << "Untrans"
@@ -650,7 +672,7 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
         // calculate the frequencies for output
         double totalFamilyCount[8];
         int nCount = 2;
-        if (typeOfPhenotype == "polytomous") nCount = 8;
+        if (typeOfPhenotype == "polytomous") nCount = 2*K;
         for (int i = 0; i < nCount; i++) {
             totalFamilyCount[i] = 0;
             for (int j = 0; j < nhap; j++) if (!zero[j]) {
@@ -671,15 +693,21 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                                << setw(11) << round(familyCount[0][j] / totalFamilyCount[0], options.epsilon) << " "
                                ;
                 else { if (typeOfPhenotype == "polytomous")
+                	{
                     *outStream << setw(11) << round(familyCount[0][j], options.epsilon) << " "
-                               << setw(11) << round(familyCount[1][j], options.epsilon) << " "
-                               << setw(11) << round(familyCount[2][j], options.epsilon) << " "
-                               << setw(11) << round(familyCount[3][j], options.epsilon) << " "
-                               << setw(11) << round(familyCount[0][j] / totalFamilyCount[0], options.epsilon) << " "
-                               << setw(11) << round(familyCount[1][j] / totalFamilyCount[1], options.epsilon) << " "
-                               << setw(11) << round(familyCount[2][j] / totalFamilyCount[2], options.epsilon) << " "
-                               << setw(11) << round(familyCount[3][j] / totalFamilyCount[3], options.epsilon) << " "
-                               ;                
+                               << setw(11) << round(familyCount[1][j], options.epsilon) << " ";
+                    if (K > 2) {
+                    *outStream << setw(11) << round(familyCount[2][j], options.epsilon) << " ";
+                    if (K == 4)
+                    *outStream << setw(11) << round(familyCount[3][j], options.epsilon) << " ";
+                    }
+                    *outStream << setw(11) << round(familyCount[0][j] / totalFamilyCount[0], options.epsilon) << " "
+                               << setw(11) << round(familyCount[1][j] / totalFamilyCount[1], options.epsilon) << " ";
+                    if (K > 2) {
+                    *outStream << setw(11) << round(familyCount[2][j] / totalFamilyCount[2], options.epsilon) << " ";
+                    if (K == 4)
+                    *outStream << setw(11) << round(familyCount[3][j] / totalFamilyCount[3], options.epsilon) << " ";
+					}                                               
                 else
                     *outStream << setw(11) << round(familyCount[0][j], options.epsilon) << " "
                                << setw(11) << round(familyCount[0][j] / totalFamilyCount[0], options.epsilon) << " "
@@ -696,14 +724,19 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
     		*outStream << endl;
 	        *outStream << setw(haplotypeWidth) << (options.genotype ? "Genotype" : (alleles ? "Allele" : "Haplotype"));
             *outStream << setw(12) << "Untrans 1"
-                       << setw(12) << "Untrans 2"
-                       << setw(12) << "Untrans 3"
-                       << setw(12) << "Untrans 4"
-                       << setw(12) << "1-Freq"
-                       << setw(12) << "2-Freq"
-                       << setw(12) << "3-Freq"
-                       << setw(12) << "4-Freq"
-                       ;        
+                       << setw(12) << "Untrans 2";
+            if (K > 2) {
+            *outStream << setw(12) << "Untrans 3";
+            if (K == 4)
+            *outStream << setw(12) << "Untrans 4";
+                       }
+            *outStream << setw(12) << "1-Freq"
+                       << setw(12) << "2-Freq";
+            if (K > 2) {
+            *outStream << setw(12) << "3-Freq";
+            if (K == 4)
+            *outStream << setw(12) << "4-Freq";
+                       }        
         if (options.rare) {
             *outStream << setw(12) << "Common";
         }
@@ -714,14 +747,19 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                 Haplotype hap = sortedHaps[i];
                 *outStream << setw(haplotypeWidth) << hap.str(options.condition.size()*options.condgenotype, options.genotype, ACGT);
                     *outStream << setw(11) << round(familyCount[4][j], options.epsilon) << " "
-                               << setw(11) << round(familyCount[5][j], options.epsilon) << " "
-                               << setw(11) << round(familyCount[6][j], options.epsilon) << " "
-                               << setw(11) << round(familyCount[7][j], options.epsilon) << " "
-                               << setw(11) << round(familyCount[4][j] / totalFamilyCount[4], options.epsilon) << " "
-                               << setw(11) << round(familyCount[5][j] / totalFamilyCount[5], options.epsilon) << " "
-                               << setw(11) << round(familyCount[6][j] / totalFamilyCount[6], options.epsilon) << " "
-                               << setw(11) << round(familyCount[7][j] / totalFamilyCount[7], options.epsilon) << " "
-                               ;                     
+                               << setw(11) << round(familyCount[5][j], options.epsilon) << " ";
+                    if (K > 2) {
+                    *outStream << setw(11) << round(familyCount[6][j], options.epsilon) << " ";
+                    if (K == 4)
+                    *outStream << setw(11) << round(familyCount[7][j], options.epsilon) << " ";
+                    }
+                    *outStream << setw(11) << round(familyCount[4][j] / totalFamilyCount[4], options.epsilon) << " "
+                               << setw(11) << round(familyCount[5][j] / totalFamilyCount[5], options.epsilon) << " ";
+                    if (K > 2) {
+                    *outStream << setw(11) << round(familyCount[6][j] / totalFamilyCount[6], options.epsilon) << " ";
+                    if (K == 4)
+                    *outStream << setw(11) << round(familyCount[7][j] / totalFamilyCount[7], options.epsilon) << " ";
+                               }                     
      		}
             if (options.rare && !rare[j]) {
                 *outStream << "+";
