@@ -116,7 +116,7 @@ void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options) {
 	  	// polytomous trait headers
             if (haveFamilies) {
 	      if (! options.genotype) {
-	      tabularFamilies << right << setw(4) << "CHR" << setw(9) << oneMarker << setw(13) << "BP_START" << setw(13) << "BP_END" << setw(13) << testedObject 
+	      tabularFamilies << right << setw(4) << "CHR" << setw(9) << oneMarker << setw(13) << "BP_START" << setw(13) << "BP_END" << setw(13) << testedObject ;
 	      for (int k = 1; k <= K; k++)	
 	      	tabularFamilies << setw(13) << "F" << k << "_A" << setw(7) << "F", k, "_U"; 
 	      tabularFamilies << setw(13) << "CHISQ" << setw(5) << "DF" << setw(13) << "P";
@@ -418,7 +418,7 @@ void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& comb
 		      } else if ("polytomous" == typeOfPhenotype) {
 			  for (int k = 0; k < K; k++)
 			  	tabularFamilies << setw(7) << familyCount[k][liIdx]/laTotalFamilyCount[k] << setw(7) << familyCount[k+4][liIdx]/laTotalFamilyCount[k+4] ;
-			  tabularFamilies << setw(13) << "NA" << setw(5) << "NA" << setw(13) << "NA" 
+			  tabularFamilies << setw(13) << "NA" << setw(5) << "NA" << setw(13) << "NA" ;
 			  for (int k = 0; k < K-1; k++)
 				tabularFamilies << setw(13) << "NA" << setw(13) << "NA" << setw(13) << "NA" ;
 		      }
