@@ -1,4 +1,15 @@
-/* unphased.cpp - main program for UNPHASED
+/* polyunphased.cpp - main program for POLYUNPHASED
+
+Extension of the original code enabling analysis of polytomous phenotypes
+
+Copyright (c) 2015 Alexandre Bureau
+Université Laval
+Département de médecine sociale et préventive
+1050 rue de la Médecine
+Québec (Québec), G1V 0A6, Canada
+alexandre.bureau@fmed.ulaval.ca
+
+Original code:
 
    Copyright (c) 2006 Frank Dudbridge
    MRC Biostatistics Unit
@@ -31,7 +42,7 @@ using namespace std;
 
 int main(int argc, char **argv) {
 
-    const string VERSION = "3.1.7";
+    const string VERSION = "1.0";
 
     UnphasedOptions options(argc, argv);
     ostream *outStream;
@@ -44,10 +55,10 @@ int main(int argc, char **argv) {
     } else {
         outStream = &cout;
     }
-    *outStream << endl << "***START OF UNPHASED " << VERSION << "***" << endl;
+    *outStream << endl << "***START OF POLYUNPHASED " << VERSION << "***" << endl;
     UnphasedAnalysis analysis(outStream);
     analysis.run(options);
-    *outStream << "***END OF UNPHASED " << VERSION << "***" << endl << endl;;
+    *outStream << "***END OF POLYUNPHASED " << VERSION << "***" << endl << endl;;
     if (outStream != &cout) {
         ((ofstream *)outStream)->close();
     }
