@@ -1,5 +1,16 @@
 /* UnphasedAnalysisLikelihood.cpp - Association analysis in trios and unrelateds
 
+   Extension of the original code enabling analysis of polytomous phenotypes
+   
+   Copyright (c) 2015 Alexandre Bureau
+   Université Laval
+   Département de médecine sociale et préventive
+   1050 rue de la Médecine
+   Québec (Québec), G1V 0A6, Canada
+   alexandre.bureau@fmed.ulaval.ca
+   
+   Original code:
+   
    Copyright (c) 2006 Frank Dudbridge
    MRC Biostatistics Unit
    Robinson Way
