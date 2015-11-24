@@ -403,12 +403,18 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                                 }
                                                 freq += (frequency[whichmt] + (!family.sibship) * frequency[whichmnt]) / nsib * (family.sibship ? 2 : 1);
                                                 if (!options.genotype && !MchrX) {
-                                                    linear[sib] += betaparent[whichft];
+			                                    if (typeOfPhenotype == "polytomous") {
+			                                    	if (sibTrait[sib] < K) linear[sib] = betaparent[whichft + (sibTrait[sib]-1)*nhap];
+			                                    	}
+                                                    else linear[sib] += betaparent[whichft];
                                                     if (options.hhrr) {
                                                         alphaterm[sib] += alpha[whichft];
                                                     }
                                                 }
-                                                linear[sib] += betaparent[whichmt];
+			                                    if (typeOfPhenotype == "polytomous") {
+			                                    	if (sibTrait[sib] < K) linear[sib] = betaparent[whichmt + (sibTrait[sib]-1)*nhap];
+			                                    	}
+                                                else linear[sib] += betaparent[whichmt];
                                                 if (options.hhrr) {
                                                     alphaterm[sib] += alpha[whichmt];
                                                 }
@@ -453,7 +459,8 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                         // total contribution from all sibs
                                         double beta1 = 0;
                                         for (int sib = 0; sib < nsib; sib++) {
-                                            beta1 += invVar * (sibTrait[sib] - parentSumIntercept) * linear[sib];
+                                    		if (typeOfPhenotype == "polytomous") beta1 += linear[sib];
+                                            else beta1 += invVar * (sibTrait[sib] - parentSumIntercept) * linear[sib];
                                             if (options.hhrr) {
                                                 beta1 -= invVar * parentSumIntercept * alphaterm[sib];
                                             }
