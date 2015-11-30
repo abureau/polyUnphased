@@ -760,17 +760,17 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
             if (!zero[j]) {
                 Haplotype hap = sortedHaps[i];
                 *outStream << setw(haplotypeWidth) << hap.str(options.condition.size()*options.condgenotype, options.genotype, ACGT);
-                    *outStream << setw(11) << round(familyCount[4][j], options.epsilon) << " "
-                               << setw(11) << round(familyCount[5][j], options.epsilon) << " ";
+                    *outStream << setw(11) << round(familyCount[K][j], options.epsilon) << " "
+                               << setw(11) << round(familyCount[K+1][j], options.epsilon) << " ";
                     if (K > 2) {
-                    *outStream << setw(11) << round(familyCount[6][j], options.epsilon) << " ";
+                    *outStream << setw(11) << round(familyCount[K+2][j], options.epsilon) << " ";
                     if (K == 4)
                     *outStream << setw(11) << round(familyCount[7][j], options.epsilon) << " ";
                     }
-                    *outStream << setw(11) << round(familyCount[4][j] / totalFamilyCount[4], options.epsilon) << " "
-                               << setw(11) << round(familyCount[5][j] / totalFamilyCount[5], options.epsilon) << " ";
+                    *outStream << setw(11) << round(familyCount[K][j] / totalFamilyCount[4], options.epsilon) << " "
+                               << setw(11) << round(familyCount[K+1][j] / totalFamilyCount[5], options.epsilon) << " ";
                     if (K > 2) {
-                    *outStream << setw(11) << round(familyCount[6][j] / totalFamilyCount[6], options.epsilon) << " ";
+                    *outStream << setw(11) << round(familyCount[K+2][j] / totalFamilyCount[6], options.epsilon) << " ";
                     if (K == 4)
                     *outStream << setw(11) << round(familyCount[7][j] / totalFamilyCount[7], options.epsilon) << " ";
                                }                     

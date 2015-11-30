@@ -98,7 +98,7 @@ double UnphasedAnalysis::fullNull(UnphasedOptions &options,
         }
 
     df = partialCode.size() - 1;
-	if (typeOfPhenotype == "polytomous")  df *= 3;
+	if (typeOfPhenotype == "polytomous")  df *= K-1;
 
     return(getloglikelihood("Null", options, which, true));
 }
@@ -153,7 +153,7 @@ double UnphasedAnalysis::fullAlternative(UnphasedOptions &options,
         }
 
     df = partialCode.size() - 1;
-	if (typeOfPhenotype == "polytomous")  df *= 3;
+	if (typeOfPhenotype == "polytomous")  df *= K-1;
 
     return(getloglikelihood("Alternative", options, which, false));
 }
@@ -231,7 +231,7 @@ double UnphasedAnalysis::haploMainAlternative(UnphasedOptions &options,
     if (partialCode.size()) {
         df += partialCode.size() - 1;
     }
-	if (typeOfPhenotype == "polytomous")  df *= 3;
+	if (typeOfPhenotype == "polytomous")  df *= K-1;
 
     return(getloglikelihood("Alternative", options, which, false));
 }
@@ -310,7 +310,7 @@ double UnphasedAnalysis::alleleMainAlternative(UnphasedOptions &options,
             df += partialCode.size() - 1;
         }
     }
-    if (typeOfPhenotype == "polytomous")  df *= 3;
+    if (typeOfPhenotype == "polytomous")  df *= K-1;
 
     return(getloglikelihood("Alternative", options, which, false));
 }
@@ -374,7 +374,7 @@ double UnphasedAnalysis::gxgNull(UnphasedOptions &options, const string &which,
     if (partialCode.size()) {
         df += partialCode.size() - 1;
     }
-	if (typeOfPhenotype == "polytomous")  df *= 3;
+	if (typeOfPhenotype == "polytomous")  df *= K-1;
 
     return(getloglikelihood("Null", options, which, true));
 }
@@ -444,7 +444,7 @@ double UnphasedAnalysis::gxgAlternative(UnphasedOptions &options,
     if (partialCode.size()) {
         df += partialCode.size() - 1;
     }
-	if (typeOfPhenotype == "polytomous")  df *= 3;
+	if (typeOfPhenotype == "polytomous")  df *= K-1;
 
     return(getloglikelihood("Alternative", options, which, false));
 }
@@ -491,7 +491,7 @@ double UnphasedAnalysis::pairwiseNull(UnphasedOptions &options, const string &wh
         }
 
     df = partialCode.size() - 1;
-	if (typeOfPhenotype == "polytomous")  df *= 3;
+	if (typeOfPhenotype == "polytomous")  df *= K-1;
 	
     return(getloglikelihood("Null", options, which, true));
 
@@ -543,7 +543,7 @@ double UnphasedAnalysis::pairwiseAlternative(UnphasedOptions &options, const str
         }
 
     df = partialCode.size() - 1;
-	if (typeOfPhenotype == "polytomous")  df *= 3;
+	if (typeOfPhenotype == "polytomous")  df *= K-1;
 
     return(getloglikelihood("Alternative", options, which, false));
 }
