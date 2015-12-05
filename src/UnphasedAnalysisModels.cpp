@@ -559,6 +559,10 @@ double UnphasedAnalysis::individualtests(UnphasedOptions &options, const string 
 
     // maximise likelihood under global null
     int nhap = genoCode.size();
+        int betasize;
+    if (typeOfPhenotype == "polytomous") betasize = nhap*(K-1);
+    else betasize = nhap;
+
     if (which == "asymptotic") {
         *outStream << "Individual tests: " << flush;
     }
@@ -599,8 +603,13 @@ double UnphasedAnalysis::individualtests(UnphasedOptions &options, const string 
     vector<double> workingGradient(gradient.size(), 0);
     for (int i = 0; i < nhap; i++) if (!zero[i]) {
             workingGradient[group[0][i]] += gradient[i];
+            if (typeOfPhenotype == "polytomous")
+                {
+                for (int k = 1; k < K-1; k++)
+                    workingGradient[group[0][i] + k*nhap] += gradient[i + k*nhap];
+                }
         }
-    for (int i = nhap; i < gradient.size(); i++) {
+    for (int i = betasize; i < gradient.size(); i++) {
         workingGradient[i] = gradient[i];
     }
 
@@ -612,14 +621,25 @@ double UnphasedAnalysis::individualtests(UnphasedOptions &options, const string 
     for (int i = 0; i < nhap; i++) if (!zero[i]) {
             for (int j = 0; j < nhap; j++) if (!zero[j]) {
                     workingVariance[group[0][i]][group[0][j]] += variance[i][j];
+            		if (typeOfPhenotype == "polytomous") {
+                		for (int k = 1; k < K-1; k++)
+                			for (int h = 1; h < K-1; h++)
+                    			workingVariance[group[0][i] + k*nhap][group[0][j] + h*nhap] += variance[i + k*nhap][j + h*nhap];
+                	}
                 }
-            for (int j = nhap; j < variance.size(); j++) {
+            for (int j = betasize; j < variance.size(); j++) {
                 workingVariance[group[0][i]][j] += variance[i][j];
                 workingVariance[j][group[0][i]] += variance[j][i];
+            	if (typeOfPhenotype == "polytomous") {
+                	for (int k = 1; k < K-1; k++) {
+                    	workingVariance[group[0][i] + k*nhap][j] += variance[i + k*nhap][j];
+                    	workingVariance[j][group[0][i] + k*nhap] += variance[j][i + k*nhap];
+                    }
+                }                		
             }
         }
-    for (int i = nhap; i < variance.size(); i++)
-        for (int j = nhap; j < variance.size(); j++) {
+    for (int i = betasize; i < variance.size(); i++)
+        for (int j = betasize; j < variance.size(); j++) {
             workingVariance[i][j] = variance[i][j];
         }
 
@@ -627,20 +647,24 @@ double UnphasedAnalysis::individualtests(UnphasedOptions &options, const string 
     vector<vector<double> > Vaa, Vab, Vbb;
 
     // variance-covariance matrix of the nuisance parameters only
-    Vaa.resize(gradient.size() - nhap);
+    Vaa.resize(gradient.size() - betasize);
     for (int i = 0; i < Vaa.size(); i++) {
         Vaa[i].resize(Vaa.size(), 0);
         for (int j = 0; j < Vaa.size(); j++) {
-            Vaa[i][j] = workingVariance[i+nhap][j+nhap];
+            Vaa[i][j] = workingVariance[i+betasize][j+betasize];
         }
     }
 
     // covariance between betas and nuisance parameters
-    Vab.resize(nhap);
-    for (int i = 0; i < nhap; i++) {
+    Vab.resize(betasize);
+    for (int i = 0; i < betasize; i++) {
         Vab[i].resize(Vaa.size(), 0);
         for (int j = 0; j < Vaa.size(); j++) {
-            Vab[group[0][i]][j] = workingVariance[group[0][i]][j+nhap];
+            Vab[group[0][i]][j] = workingVariance[group[0][i]][j+betasize];
+            if (typeOfPhenotype == "polytomous") {
+                for (int k = 1; k < K-1; k++)
+                	Vab[group[0][i] + k*nhap][j] = workingVariance[group[0][i]+k*nhap][j+betasize];
+			}
         }
     }
 
@@ -649,10 +673,11 @@ double UnphasedAnalysis::individualtests(UnphasedOptions &options, const string 
     sandwich(Vab, Vaa, Vbb);
 
     // the score tests
-    for (int i = 0; i < nhap; i++) {
-        if (!zero[i] && !rare[i]) {
-            chisq[i] = workingGradient[group[0][i]] * workingGradient[group[0][i]] /
-                       (workingVariance[group[0][i]][group[0][i]] - Vbb[group[0][i]][group[0][i]]);
+    for (int i = 0; i < betasize; i++) {
+        if (!zero[i%nhap] && !rare[i%nhap]) {
+        // Ici le modulo et la division entire sont utilisŽs pour traiter les phŽnotypes polytomique quand betasize > nhap
+            chisq[i] = workingGradient[group[0][i%nhap] + (i/nhap)*nhap] * workingGradient[group[0][i%nhap + (i/nhap)*nhap]] /
+                       (workingVariance[group[0][i]%nhap + (i/nhap)*nhap][group[0][i%nhap] + (i/nhap)*nhap] - Vbb[group[0][i%nhap + (i/nhap)*nhap]][group[0][i%nhap + (i/nhap)*nhap]]);
             pvalue[i] = pochisq(chisq[i], 1);
             bestpvalue = min(bestpvalue, pvalue[i]);
             multipleTests++;
