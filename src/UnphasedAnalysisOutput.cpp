@@ -129,7 +129,7 @@ void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options) {
 	      if (! options.genotype) {
 	      tabularFamilies << right << setw(4) << "CHR" << setw(9) << oneMarker << setw(13) << "BP_START" << setw(13) << "BP_END" << setw(13) << testedObject ;
 	      for (int k = 1; k <= K; k++)	
-	      	tabularFamilies << setw(13) << "F" << k << "_A" << setw(7) << "F", k, "_U" << setw(13) << "CHISQ" << setw(5) << "DF" << setw(13) << "P" << setw(13) << "OR" << k << setw(13) << "SE" << k << setw(13) << "L95_" << k << setw(13) << "U95_" << k; 
+	      	tabularFamilies << setw(13) << "F" << k << "_A" << setw(7) << "F" << k << "_U" << setw(13) << "CHISQ" << setw(5) << "DF" << setw(13) << "P" << setw(13) << "OR" << k << setw(13) << "SE" << k << setw(13) << "L95_" << k << setw(13) << "U95_" << k; 
 	      tabularFamilies << left << endl;
 	      }
 	    }
