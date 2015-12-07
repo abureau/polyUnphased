@@ -678,8 +678,8 @@ double UnphasedAnalysis::individualtests(UnphasedOptions &options, const string 
     for (int i = 0; i < betasize; i++) {
         if (!zero[i%nhap] && !rare[i%nhap]) {
         // Ici le modulo et la division entire sont utilisŽs pour traiter les phŽnotypes polytomique quand betasize > nhap
-            chisq[i] = workingGradient[group[0][i%nhap] + (i/nhap)*nhap] * workingGradient[group[0][i%nhap + (i/nhap)*nhap]] /
-                       (workingVariance[group[0][i]%nhap + (i/nhap)*nhap][group[0][i%nhap] + (i/nhap)*nhap] - Vbb[group[0][i%nhap + (i/nhap)*nhap]][group[0][i%nhap + (i/nhap)*nhap]]);
+            chisq[i] = workingGradient[group[0][i%nhap] + (i/nhap)*nhap] * workingGradient[group[0][i%nhap] + (i/nhap)*nhap] /
+                       (workingVariance[group[0][i%nhap] + (i/nhap)*nhap][group[0][i%nhap] + (i/nhap)*nhap] - Vbb[group[0][i%nhap] + (i/nhap)*nhap][group[0][i%nhap] + (i/nhap)*nhap]);
             pvalue[i] = pochisq(chisq[i], 1);
             bestpvalue = min(bestpvalue, pvalue[i]);
             multipleTests++;
