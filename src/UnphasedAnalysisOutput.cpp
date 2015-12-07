@@ -83,9 +83,10 @@ void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options) {
 	      if (! options.genotype) {
 	      tabularFamilies << right << setw(4) << "CHR" << setw(12) << "SNP" << setw(13) << "BP"  << setw(4) << "A1" << setw(4) << "A2" ;
           for (int k = 1; k <= K; k++)	
-	      	tabularFamilies	<< setw(7) << "T" << k << setw(7) << "U" << k ;
+	      	tabularFamilies	<< setw(6) << "T" << k << setw(6) << "U" << k ;
           for (int k = 1; k <= K-1; k++)	
-	      	tabularFamilies << setw(13) << "OR" << k << setw(13) << "SE" << k << setw(13) << "L95_" << k << setw(13) << "U95_" << k; 
+	      	tabularFamilies << setw(12) << "OR" << k << setw(12) << "L95_" << k << setw(12) << "U95_" << k << setw(12) << "CHISQ" << k << setw(12) << "P" << k; 
+	      tabularFamilies << left << endl;
 	      }
 	    }
 	    } else {	  	 
@@ -129,7 +130,9 @@ void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options) {
 	      if (! options.genotype) {
 	      tabularFamilies << right << setw(4) << "CHR" << setw(9) << oneMarker << setw(13) << "BP_START" << setw(13) << "BP_END" << setw(13) << testedObject ;
 	      for (int k = 1; k <= K; k++)	
-	      	tabularFamilies << setw(13) << "F" << k << "_A" << setw(7) << "F" << k << "_U" << setw(13) << "CHISQ" << setw(5) << "DF" << setw(13) << "P" << setw(13) << "OR" << k << setw(13) << "SE" << k << setw(13) << "L95_" << k << setw(13) << "U95_" << k; 
+	      	tabularFamilies << setw(12) << "F" << k << "_A" << setw(6) << "F" << k << "_U";
+	      for (int k = 1; k <= K; k++)	
+	      	tabularFamilies  << setw(12) << "CHISQ" << k << setw(5) << "DF" << setw(12) << "P" << k << setw(12) << "OR" << k << setw(12) << "SE" << k << setw(12) << "L95_" << k << setw(12) << "U95_" << k; 
 	      tabularFamilies << left << endl;
 	      }
 	    }
