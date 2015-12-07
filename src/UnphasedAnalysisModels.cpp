@@ -657,7 +657,7 @@ double UnphasedAnalysis::individualtests(UnphasedOptions &options, const string 
 
     // covariance between betas and nuisance parameters
     Vab.resize(betasize);
-    for (int i = 0; i < betasize; i++) {
+    for (int i = 0; i < nhap; i++) {
         Vab[i].resize(Vaa.size(), 0);
         for (int j = 0; j < Vaa.size(); j++) {
             Vab[group[0][i]][j] = workingVariance[group[0][i]][j+betasize];
