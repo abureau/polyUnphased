@@ -54,7 +54,7 @@ public:
 protected:
     void outputOptions(class UnphasedOptions &);
     void outputResults(vector<int> &, string &, double, double, int, class UnphasedOptions &);
-    void outputTabularHeaders(class UnphasedOptions &, int);
+    void outputTabularHeaders(class UnphasedOptions &);
     void outputTabular(class UnphasedOptions &, vector<int>&, double, double, int);
     void dumpHaplotypes(class UnphasedOptions &, ofstream &);
     Locus getLocus(string &);

@@ -50,7 +50,7 @@
 #include "pvalues.h"
 #define COMMENT
 
-void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options, int nhap) {
+void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options) {
 #ifdef COMMENT
   // headers for SNPs
   // not much use in a file with a mixture of SNPs and multiallelic markers
@@ -58,7 +58,7 @@ void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options, int nhap) 
   //cout << "window " << options.window << " genoCode.size " << genoCode.size() << endl;
   //if (1 == options.window && (genoCode.size() + ! options.genotype == 3)) {
   // contournement d'un bug d'Unphased
-  if (1 == options.window && (nhap + ! options.genotype == 3)) {
+  if (1 == options.window && !options.condition && ! options.genotype) {
 	  // binary traits
 	  if ("binary" == typeOfPhenotype) { // binary trait headers
             if (haveFamilies) {
@@ -915,8 +915,8 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
     if (typeOfPhenotype == "polytomous") {
     *outStream << setw(haplotypeWidth) << " ";
     for (int k = 1; k < K; k++)
-    	if (options.individual) *outStream << setw(58) << "Level" << setw(2) << k;
-    	else *outStream << setw(34) << "Level" << setw(2) << k;
+    	if (options.individual) *outStream << "Level" << setw(58) << k << setw(2) ;
+    	else *outStream << "Level" << setw(34) << k << setw(2) ;
     *outStream << endl;
     	}
     *outStream << setw(haplotypeWidth) << (options.genotype ? "Genotype" : (alleles ? "Allele" : "Haplotype"));
