@@ -455,7 +455,7 @@ void UnphasedAnalysis::analysemarkers_main(UnphasedOptions &options, const strin
             *outStream << "ERROR: could not open family tabular file " << filename << endl;
             exit(-1);
         }
-	outputTabularHeaders(options);
+	outputTabularHeaders(options,genoCode.size());
         tabularUnrelateds.precision(4);
         tabularFamilies.precision(4);
   }

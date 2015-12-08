@@ -50,7 +50,7 @@
 #include "pvalues.h"
 #define COMMENT
 
-void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options) {
+void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options, int nhap) {
 #ifdef COMMENT
   // headers for SNPs
   // not much use in a file with a mixture of SNPs and multiallelic markers
@@ -58,7 +58,7 @@ void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options) {
   //cout << "window " << options.window << " genoCode.size " << genoCode.size() << endl;
   //if (1 == options.window && (genoCode.size() + ! options.genotype == 3)) {
   // contournement d'un bug d'Unphased
-  if (1 == options.window && ! options.genotype) {
+  if (1 == options.window && (nhap + ! options.genotype == 3)) {
 	  // binary traits
 	  if ("binary" == typeOfPhenotype) { // binary trait headers
             if (haveFamilies) {
@@ -440,7 +440,7 @@ void UnphasedAnalysis::outputTabular(UnphasedOptions &options, vector<int>& comb
 			}
 		      } else if ("polytomous" == typeOfPhenotype) {
 			  for (int k = 0; k < K; k++)
-			  	tabularFamilies << setw(7) << familyCount[k][liIdx]/laTotalFamilyCount[k] << setw(7) << familyCount[k+K][liIdx]/laTotalFamilyCount[k+K] ;
+			  	tabularFamilies << setw(13) << familyCount[k][liIdx]/laTotalFamilyCount[k] << setw(13) << familyCount[k+K][liIdx]/laTotalFamilyCount[k+K] ;
 				if (options.individual) {
 			  		for (int k = 0; k < K-1; k++)
 			  			tabularFamilies << setw(13) << lrChi2[k] << setw(5) << 1 << setw(13) << lrP[k] << setw(13) << lrOdds[k] << setw(13) << stderror[liIdx + k*genoCode.size()] << setw(13) << exp(log(lrOdds[k])-1.96*stderror[liIdx + k*genoCode.size()]) << setw(13) << exp(log(lrOdds[k])+1.96*stderror[liIdx + k*genoCode.size()]);				
@@ -915,7 +915,8 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
     if (typeOfPhenotype == "polytomous") {
     *outStream << setw(haplotypeWidth) << " ";
     for (int k = 1; k < K; k++)
-    	*outStream << setw(6) << "Level" << setw(30) << k;
+    	if (options.individual) *outStream << setw(58) << "Level" << setw(2) << k;
+    	else *outStream << setw(34) << "Level" << setw(2) << k;
     *outStream << endl;
     	}
     *outStream << setw(haplotypeWidth) << (options.genotype ? "Genotype" : (alleles ? "Allele" : "Haplotype"));
