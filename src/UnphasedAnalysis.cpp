@@ -235,9 +235,9 @@ void UnphasedAnalysis::resizeArrays() {
             stderrorCovariate[i][j] = 0;
         }
 
-    chisq.resize(size);
+    chisq.resize(size*(K-1));
     chisq = 0;
-    pvalue.resize(size);
+    pvalue.resize(size*(K-1));
     pvalue = 0;
     rare.resize(size);
     rare = false;
