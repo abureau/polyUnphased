@@ -915,8 +915,8 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
     if (typeOfPhenotype == "polytomous") {
     *outStream << setw(haplotypeWidth) << " ";
     for (int k = 1; k < K; k++)
-    	if (options.individual) *outStream << "Level " << setw(56) << k  ;
-    	else *outStream << "Level " << setw(32) << k ;
+    	if (options.individual) *outStream << "Level " << setw(54) << k  ;
+    	else *outStream << "Level " << setw(30) << k ;
     *outStream << endl;
     	}
     *outStream << setw(haplotypeWidth) << (options.genotype ? "Genotype" : (alleles ? "Allele" : "Haplotype"));
