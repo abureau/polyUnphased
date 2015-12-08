@@ -58,7 +58,7 @@ void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options) {
   //cout << "window " << options.window << " genoCode.size " << genoCode.size() << endl;
   //if (1 == options.window && (genoCode.size() + ! options.genotype == 3)) {
   // contournement d'un bug d'Unphased
-  if (1 == options.window && !options.condition && ! options.genotype) {
+  if (1 == options.window && options.condition =="" && ! options.genotype) {
 	  // binary traits
 	  if ("binary" == typeOfPhenotype) { // binary trait headers
             if (haveFamilies) {
