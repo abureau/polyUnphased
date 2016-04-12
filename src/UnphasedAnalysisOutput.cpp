@@ -85,7 +85,8 @@ void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options) {
           for (int k = 1; k <= K; k++)	
 	      	tabularFamilies	<< setw(6) << "T" << k << setw(6) << "U" << k ;
           for (int k = 1; k <= K-1; k++)	
-	      	tabularFamilies << setw(12) << "OR" << k << setw(12) << "L95_" << k << setw(12) << "U95_" << k << setw(12) << "CHISQ" << k << setw(12) << "P" << k; 
+	      	tabularFamilies << setw(12) << "OR" << k << setw(12) << "L95_" << k << setw(12) << "U95_" << k ; 
+			if (options.individual) tabularFamilies << setw(12) << "CHISQ" << k << setw(12) << "P" << k;
 	      tabularFamilies << left << endl;
 	      }
 	    }
