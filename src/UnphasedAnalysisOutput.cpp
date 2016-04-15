@@ -88,7 +88,7 @@ void UnphasedAnalysis::outputTabularHeaders(UnphasedOptions &options) {
 	      	tabularFamilies << setw(12) << "OR" << k << setw(12) << "L95_" << k << setw(12) << "U95_" << k ; 
 			if (options.individual) tabularFamilies << setw(12) << "CHISQ" << k << setw(12) << "P" << k;
 			}
-	      tabularFamilies << left << endl;
+	      tabularFamilies << setw(13) << "CHISQ" << setw(13) << "P" << left << endl;
 	      }
 	    }
 	    } else {	  	 
