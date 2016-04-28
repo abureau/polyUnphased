@@ -670,19 +670,20 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
 		if (typeOfPhenotype == "polytomous")
         	{
             *outStream << setw(haplotypeWidth) << "" << setw(14) << "Level 1"
-                       << setw(14) << "Level 2";
+                       << setw(12) << "Level 2";
             if (K > 2) {
-            *outStream << setw(14) << "Level 3";
+            *outStream << setw(12) << "Level 3";
             if (K == 4)
-            *outStream << setw(14) << "Level 4";
+            *outStream << setw(12) << "Level 4";
                        }
-            *outStream << setw(14) << "Level 1"
-                       << setw(14) << "Level 2";
+            *outStream << setw(12) << "Level 1"
+                       << setw(12) << "Level 2";
             if (K > 2) {
-            *outStream << setw(14) << "Level 3";
+            *outStream << setw(12) << "Level 3";
             if (K == 4)
-            *outStream << setw(14) << "Level 4";
+            *outStream << setw(12) << "Level 4";
                        }
+            *outStream << endl;
             }
         *outStream << setw(haplotypeWidth) << (options.genotype ? "Genotype" : (alleles ? "Allele" : "Haplotype"));
         if (typeOfPhenotype == "quant")
