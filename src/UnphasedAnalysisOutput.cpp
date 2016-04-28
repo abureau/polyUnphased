@@ -669,7 +669,7 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
         outStream->setf(ios::left);
 		if (typeOfPhenotype == "polytomous")
         	{
-            *outStream << setw(haplotypeWidth) << "" << setw(14) << "Level 1"
+            *outStream << setw(haplotypeWidth) << "" << setw(12) << "Level 1"
                        << setw(12) << "Level 2";
             if (K > 2) {
             *outStream << setw(12) << "Level 3";
