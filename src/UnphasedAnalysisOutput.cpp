@@ -667,6 +667,23 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
     if (haveFamilies) {
         *outStream << "ESTIMATES OF MARGINAL " << (options.genotype ? "GENOTYPE" : (alleles ? "ALLELE" : "HAPLOTYPE")) << " FREQUENCIES IN FAMILIES" << endl;
         outStream->setf(ios::left);
+		if (typeOfPhenotype == "polytomous")
+        	{
+            *outStream << setw(haplotypeWidth) << "" << setw(14) << "Level 1"
+                       << setw(14) << "Level 2";
+            if (K > 2) {
+            *outStream << setw(14) << "Level 3";
+            if (K == 4)
+            *outStream << setw(14) << "Level 4";
+                       }
+            *outStream << setw(14) << "Level 1"
+                       << setw(14) << "Level 2";
+            if (K > 2) {
+            *outStream << setw(14) << "Level 3";
+            if (K == 4)
+            *outStream << setw(14) << "Level 4";
+                       }
+            }
         *outStream << setw(haplotypeWidth) << (options.genotype ? "Genotype" : (alleles ? "Allele" : "Haplotype"));
         if (typeOfPhenotype == "quant")
             *outStream << setw(12) << "Count"
@@ -674,19 +691,19 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                        ;
         else { if (typeOfPhenotype == "polytomous")
         	{
-            *outStream << setw(12) << "Trans 1"
-                       << setw(12) << "Trans 2";
+            *outStream << setw(12) << "Trans"
+                       << setw(12) << "Trans";
             if (K > 2) {
-            *outStream << setw(12) << "Trans 3";
+            *outStream << setw(12) << "Trans";
             if (K == 4)
-            *outStream << setw(12) << "Trans 4";
+            *outStream << setw(12) << "Trans";
                        }
-            *outStream << setw(12) << "1-Freq"
-                       << setw(12) << "2-Freq";
+            *outStream << setw(12) << "Freq"
+                       << setw(12) << "Freq";
             if (K > 2) {
-            *outStream << setw(12) << "3-Freq";
+            *outStream << setw(12) << "Freq";
             if (K == 4)
-            *outStream << setw(12) << "4-Freq";
+            *outStream << setw(12) << "Freq";
                        }
             }        
         else
@@ -756,19 +773,19 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
      if (typeOfPhenotype == "polytomous") {
     		*outStream << endl;
 	        *outStream << setw(haplotypeWidth) << (options.genotype ? "Genotype" : (alleles ? "Allele" : "Haplotype"));
-            *outStream << setw(12) << "Untrans 1"
-                       << setw(12) << "Untrans 2";
+            *outStream << setw(12) << "Untrans"
+                       << setw(12) << "Untrans";
             if (K > 2) {
-            *outStream << setw(12) << "Untrans 3";
+            *outStream << setw(12) << "Untrans";
             if (K == 4)
-            *outStream << setw(12) << "Untrans 4";
+            *outStream << setw(12) << "Untrans";
                        }
-            *outStream << setw(12) << "1-Freq"
-                       << setw(12) << "2-Freq";
+            *outStream << setw(12) << "Freq"
+                       << setw(12) << "Freq";
             if (K > 2) {
-            *outStream << setw(12) << "3-Freq";
+            *outStream << setw(12) << "Freq";
             if (K == 4)
-            *outStream << setw(12) << "4-Freq";
+            *outStream << setw(12) << "Freq";
                        }        
         if (options.rare) {
             *outStream << setw(12) << "Common";
