@@ -1836,24 +1836,25 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                     if (i == 1 || !options.genotype && !MchrX) {
                                         // haplotype effects
                                         if (typeOfPhenotype == "polytomous") {
-                                        	if (sibTrait[sib] < K) betaGradient[whichHaps[i][j][k] + (sibTrait[sib]-1)*nhap] += sumX * condLhd[j*2+k];
+                                        	if (sibTrait[sib] < K) betaGradient[whichHaps[i][j][k] + (sibTrait[sib]-1)*nhap] += sumX * (1 - sumIntercept[sibTrait[sib]-1]) *condLhd[j*2+k];
                                         	}
-                                        else betaGradient[whichHaps[i][j][k]] += invVar * sumX * (sibTrait[sib] - sumIntercept) * condLhd[j*2+k];
-                                        alphaGradient[whichHaps[i][j][k]] -= invVar * sumX * sumIntercept * condLhd[j*2+k];
+                                        else betaGradient[whichHaps[i][j][k]] += invVar * sumX * (sibTrait[sib] - sumIntercept[0]) * condLhd[j*2+k];
+                                        alphaGradient[whichHaps[i][j][k]] -= invVar * sumX * sumIntercept[0] * condLhd[j*2+k];
 
                                         if (normal) {
                                             betaGradient[whichHaps[i][j][k]] -= invVar * sumX * linear[sib][j*2+k] * condLhd[j*2+k];
                                         }
                                         if (invCov != 0)
                                             for (int sib2 = 0; sib2 < nsib; sib2++) if (sib2 != sib) {
-                                                    betaGradient[whichHaps[i][j][k]] += invCov * sumX * (sibTrait[sib2] - sumIntercept) * condLhd[j*2+k];
-                                                    alphaGradient[whichHaps[i][j][k]] -= invCov * sumX * sumIntercept * condLhd[j*2+k];
+                                                    betaGradient[whichHaps[i][j][k]] += invCov * sumX * (sibTrait[sib2] - sumIntercept[0]) * condLhd[j*2+k];
+                                                    alphaGradient[whichHaps[i][j][k]] -= invCov * sumX * sumIntercept[0] * condLhd[j*2+k];
                                                     if (normal) {
                                                         betaGradient[whichHaps[i][j][k]] -= invCov * sumX * linear[sib2][j*2+k] * condLhd[j*2+k];
                                                     }
                                                 }
 
                                         alpha0Gradient -= (invVar + (nsib - 1) * invCov) * sumX * (beta[whichHaps[i][j][k]] + alpha[whichHaps[i][j][k]]) * condLhd[j*2+k];
+                						// Pas de alpha0 avec ph始otype polytomique, donc ne pas adapter ce calcul ne devrait pas avoir de cons子uence. 
                                         for (int cov = 0; cov < betaCovariate.size(); cov++)
                                             for (int level = 0; level < betaCovariate[cov].size(); level++) {
                                                 betaCovariate0Gradient[cov][level] -= (invVar + (nsib - 1) * invCov) * sumX * (beta[whichHaps[i][j][k]] + alpha[whichHaps[i][j][k]]) * condLhd[j*2+k];
@@ -1884,6 +1885,7 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                         if (options.hhrr) {
                                             betaparent0Gradient += (invVar + (nsib - 1) * invCov) * alpha[whichHaps[i][j][k]] * x[j*2+k];
                                         }
+                						// Pas de alpha0 avec ph始otype polytomique, donc ne pas adapter ce calcul ne devrait pas avoir de cons子uence. 
                                         for (int cov = 0; cov < betaCovariate.size(); cov++)
                                             for (int level = 0; level < betaCovariate[cov].size(); level++) {
                                                 betaparentCovariate0Gradient[cov][level] += (invVar + (nsib - 1) * invCov) * betaparent[whichHaps[i][j][k]] * x[j*2+k];
@@ -1979,11 +1981,11 @@ typeOfPhenotype == "quant" */
     }
     for (int i = 0; i < betaCovariate.size(); i++)
         for (int j = 0; j < betaCovariate[i].size(); j++) {
-            for (int k = 0; k < nhap; k++) {
+            for (int k = 0; k < betasize; k++) {
                 gradient[ix++] += betaCovariateGradient[i][j][k];
             }
             if (!confounder[i] && haveFamilies && !options.hhrr)
-                for (int k = 0; k < nhap; k++) {
+                for (int k = 0; k < betasize; k++) {
                     gradient[ix++] += betaparentCovariateGradient[i][j][k];
                 }
             if (typeOfPhenotype == "quant") {
