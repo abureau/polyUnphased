@@ -189,13 +189,21 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
         for (int k = 0; k < betaCovariate[j].size(); k++) {
             for (int i = 0; i < nhap; i++) if (!zero[i] && i != refIndex) {
                     gradientFreeParameters(variance[i+iy], v[ix--], options);
+			       if (typeOfPhenotype == "polytomous") {
+						for (int h = 1; h < K-1; h++)
+							gradientFreeParameters(variance[i+iy + h*nhap], v[ix--], options);
+					}							
                 }
-            iy += nhap;
+            iy += betasize;
             if (!confounder[j] && haveFamilies && !options.hhrr) {
                 for (int i = 0; i < nhap; i++) if (!zero[i] && i != refIndex) {
                         gradientFreeParameters(variance[i+iy], v[ix--], options);
+			       if (typeOfPhenotype == "polytomous") {
+						for (int h = 1; h < K-1; h++)
+							gradientFreeParameters(variance[i+iy + h*nhap], v[ix--], options);
+					}							
                     }
-                iy += nhap;
+            iy += betasize;
             }
             if (typeOfPhenotype == "quant") {
                 gradientFreeParameters(variance[iy++], v[ix--], options);
@@ -251,7 +259,8 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
     // betaparent
     if (haveBetaParent(options)) {
         for (int i = 0; i < nhap; i++) if (!zero[i] && i != refIndex) {
-                ix-=(K-1);
+			if (typeOfPhenotype == "polytomous") ix-=(K-1);
+			else ix--;
             }
         if (haveBetaParent0(options)) {
             ix--;
@@ -272,11 +281,17 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
             for (int i = 0; i < nhap; i++) if (!zero[i] && i != refIndex) {
                     stderrorCovariate[j][k][i] = sqrt(abs(v[ix][ix]));
                     ix--;
+			       if (typeOfPhenotype == "polytomous") {
+						for (int h = 1; h < K-1; h++) {
+                    		stderrorCovariate[j][k][i + h*nhap] = sqrt(abs(v[ix][ix]));
+                    		ix--;
+					}						
                 }
             // betaparentCovariate
             if (haveFamilies && !confounder[j] && !options.hhrr)
                 for (int i = 0; i < nhap; i++) if (!zero[i] && i != refIndex) {
-                        ix--;
+					if (typeOfPhenotype == "polytomous") ix-=(K-1);
+					else ix--;
                     }
             // baseline
             if (typeOfPhenotype == "quant") {
@@ -652,7 +667,7 @@ void UnphasedAnalysis::numericalHessian(UnphasedOptions &options, vector<vector<
 
     for (int i = 0; i < betaCovariate.size(); i++)
         for (int j = 0; j < betaCovariate[i].size(); j++) {
-            for (int k = 0; k < nhap; ix++, k++) if (!zero[k]) {
+            for (int k = 0; k < betasize; ix++, k++) if (!zero[k]) {
                     betaCovariate[i][j][k] += epsilon;
                     if (options.hhrr) {
                         betaparentCovariate[i][j][k] = betaCovariate[i][j][k];
@@ -670,7 +685,7 @@ void UnphasedAnalysis::numericalHessian(UnphasedOptions &options, vector<vector<
                     }
                 }
             if (!confounder[i] && haveFamilies && !options.hhrr) {
-                for (int k = 0; k < nhap; ix++, k++) if (!zero[k]) {
+                for (int k = 0; k < betasize; ix++, k++) if (!zero[k]) {
                         betaparentCovariate[i][j][k] += epsilon;
                         for (int l = 0; l < gradient.size(); l++) {
                             gradient[l] = 0;

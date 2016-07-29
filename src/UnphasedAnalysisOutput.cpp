@@ -1057,6 +1057,17 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                         *outStream << setw(haplotypeWidth) << hap.str(options.condition.size()*options.condgenotype, options.genotype, ACGT);
                         *outStream << setw(11) << round(thisfreq, options.epsilon) << " "
                                    << setw(11) << round(thisSE, options.epsilon) << " ";
+                    if (typeOfPhenotype == "polytomous") {
+                    	for (int h = 1; h < K-1; h++) {
+							thisfreq = betaCovariate[i][ix][k + h*nhap];
+                         	thisSE = (sortedHaps[j] != reference) ? stderrorCovariate[i][ix][k + h*nhap] : 0;
+                        	if (sortedHaps[j] != reference) {
+                            	waldchisq += thisfreq * thisfreq / thisSE / thisSE;
+                            	walddf++;
+                        	}
+                        	*outStream << setw(11) << round(thisfreq, options.epsilon) << " "
+                                   		<< setw(11) << round(thisSE, options.epsilon) << " ";
+						}
                         *outStream << endl;
                     }
                 }
@@ -1072,7 +1083,7 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
         }
     }
 
-    // modifier tests
+    // modifier tests (rendu ici)
     if (nmodifier) {
         *outStream << endl << "ESTIMATES OF MODIFIER EFFECTS" << endl;
         *outStream << "Effects are relative to those at the baseline levels" << endl;
