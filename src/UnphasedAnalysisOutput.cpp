@@ -1037,21 +1037,36 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                 // table heading
                 outStream->setf(ios::left);
                 outStream->precision(4);
+                if (typeOfPhenotype == "polytomous") {
+            		*outStream << setw(haplotypeWidth) << "" << setw(24) << "Level 1"
+                       << setw(24) << "Level 2";
+            		if (K > 2) {
+            		*outStream << setw(24) << "Level 3";
+            		if (K == 4)
+            		*outStream << setw(24) << "Level 4";
+                    }
+                }
                 *outStream << setw(haplotypeWidth) << (options.genotype ? "Genotype" : (alleles ? "Allele" : "Haplotype"));
                 *outStream << setw(12) << "Offset"
                            << setw(12) << "StdErr";
+                if (typeOfPhenotype == "polytomous") {
+                    for (int h = 1; h < K-1; h++) {
+                	*outStream << setw(12) << "Offset"
+                           << setw(12) << "StdErr";
+				}
                 *outStream << endl;
 
-                double waldchisq = 0;
+                double waldchisq[3] = {0,0,0};
                 int walddf = 0;
                 for (int j = 0; j < sortedHaps.size(); j++) {
                     int k = sortedHaps[j].index(genoCode);
                     if (!zero[k]) {
                         Haplotype hap = sortedHaps[j];
+                        /* Il y aurait un betaCovariate diffŽrent pour chaque gŽnotype du locus sur lequel on conditionne, si applicable */
                         double thisfreq = betaCovariate[i][ix][k];
                         double thisSE = (sortedHaps[j] != reference) ? stderrorCovariate[i][ix][k] : 0;
                         if (sortedHaps[j] != reference) {
-                            waldchisq += thisfreq * thisfreq / thisSE / thisSE;
+                            waldchisq[0] += thisfreq * thisfreq / thisSE / thisSE;
                             walddf++;
                         }
                         *outStream << setw(haplotypeWidth) << hap.str(options.condition.size()*options.condgenotype, options.genotype, ACGT);
@@ -1062,9 +1077,8 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
 							thisfreq = betaCovariate[i][ix][k + h*nhap];
                          	thisSE = (sortedHaps[j] != reference) ? stderrorCovariate[i][ix][k + h*nhap] : 0;
                         	if (sortedHaps[j] != reference) {
-                            	waldchisq += thisfreq * thisfreq / thisSE / thisSE;
-                            	walddf++;
-                        	}
+                            	waldchisq[h] += thisfreq * thisfreq / thisSE / thisSE;
+                        	} */
                         	*outStream << setw(11) << round(thisfreq, options.epsilon) << " "
                                    		<< setw(11) << round(thisSE, options.epsilon) << " ";
 						}
@@ -1072,18 +1086,28 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                     }
                 }
                 if (options.testconfounders) {
-                    double thispvalue = pochisq(waldchisq, walddf);
-                    *outStream << "Omnibus Wald test of zero offsets: chisq = " << round(waldchisq, options.epsilon) << " " << " df = " << walddf << " " << "p-value = " << round(thispvalue, options.epsilon) << endl;
+					if (typeOfPhenotype == "polytomous") {
+					*outStream << "Omnibus Wald test of zero offsets:" << endl;
+                    	for (int h = 0; h < K-1; h++) {
+							thispvalue = pochisq(waldchisq[h], walddf);
+                    		*outStream << "Level " << h+1 << "chisq = " << round(waldchisq[h], options.epsilon) << " " << " df = " << walddf << " " << "p-value = " << round(thispvalue, options.epsilon) << endl;
+						}
+					}
+				else {
+				    double thispvalue = pochisq(waldchisq[0], walddf);
+                    *outStream << "Omnibus Wald test of zero offsets: chisq = " << round(waldchisq[0], options.epsilon) << " " << " df = " << walddf << " " << "p-value = " << round(thispvalue, options.epsilon) << endl;
+					}
                     // do we want to count these in the multiple tests??
                     //    bestpvalue=min(bestpvalue,thispvalue);
                     //    multipleTests++;
                 }
                 ix++;
             }
-        }
-    }
-
-    // modifier tests (rendu ici)
+        	}
+    	}
+	}
+	}
+    // modifier tests 
     if (nmodifier) {
         *outStream << endl << "ESTIMATES OF MODIFIER EFFECTS" << endl;
         *outStream << "Effects are relative to those at the baseline levels" << endl;
@@ -1106,6 +1130,24 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                 // table heading
                 outStream->setf(ios::left);
                 outStream->precision(4);
+		if (typeOfPhenotype == "polytomous")
+        	{
+            *outStream << setw(haplotypeWidth) << "" << setw(12) << "Level 1"
+                       << setw(12) << "Level 2";
+            if (K > 2) {
+            *outStream << setw(12) << "Level 3";
+            if (K == 4)
+            *outStream << setw(12) << "Level 4";
+                       }
+            *outStream << setw(12) << "Level 1"
+                       << setw(12) << "Level 2";
+            if (K > 2) {
+            *outStream << setw(12) << "Level 3";
+            if (K == 4)
+            *outStream << setw(12) << "Level 4";
+                       }
+            *outStream << endl;
+            }
                 *outStream << setw(haplotypeWidth) << (options.genotype ? "Genotype" : (alleles ? "Allele" : "Haplotype"))
                            //         << setw(12) << "Offset"
                            //         << setw(12) << "StdErr"
@@ -1116,7 +1158,18 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                     *outStream << setw(12) << "Chisq"
                                << setw(12) << "P-value";
                 }
+                if (typeOfPhenotype == "polytomous") {
+        			for (int k = 1; k < K-1; k++) {
+	        			*outStream << setw(12) << "Odds-R";
+		    			*outStream << setw(12) << "95%Lo"
+               				<< setw(12) << "95%Hi";
+		    		if (options.testmodifiers) *outStream << setw(12) << "Chisq"
+                                           << setw(12) << "P-value";
+        			}
+        		}
+
                 *outStream << endl;
+                double thischisq[3] = {0,0,0};
                 for (int j = 0; j < sortedHaps.size(); j++) {
                     int k = sortedHaps[j].index(genoCode);
                     if (!zero[k] /*&& sortedHaps[j]!=reference*/) {
@@ -1127,10 +1180,9 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                         if (!normal) {
                             thisbeta -= betaCovariate[i][ix][refIndex];
                         }
-                        double thisSE = stderrorCovariate[i][ix][k];
-                        double thischisq = (sortedHaps[j] != reference) ? thisbeta / thisSE : 0;
-                        thischisq *= thischisq;
-                        double thispvalue = pochisq(thischisq, 1);
+                        double thisSE = (sortedHaps[j] != reference) ? stderrorCovariate[i][ix][k] : 0;
+                        thischisq[0] = (sortedHaps[j] != reference) ? thisbeta / thisSE : 0;
+                        thischisq[0] *= thischisq[0];
                         if (typeOfPhenotype != "quant")
                             *outStream << setw(11) << round(exp(thisbeta), options.epsilon) << " "
                                        << setw(11) << round(exp(thisbeta - 1.96 * thisSE), options.epsilon) << " "
@@ -1139,13 +1191,33 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                             *outStream << setw(11) << round(thisbeta, options.epsilon) << " "
                                        << setw(11) << round(thisbeta - 1.96 * thisSE, options.epsilon) << " "
                                        << setw(11) << round(thisbeta + 1.96 * thisSE, options.epsilon) << " ";
+                    if (typeOfPhenotype == "polytomous") {
+                    	for (int h = 1; h < K-1; h++) {
+							thisbeta = betaCovariate[i][ix][k + h*nhap] - betaCovariate[i][ix][refIndex + h*nhap];
+                         	thisSE = (sortedHaps[j] != reference) ? stderrorCovariate[i][ix][k + h*nhap] : 0;
+                        	double thischisq[h] = (sortedHaps[j] != reference) ? thisbeta / thisSE : 0;
+                        	thischisq[h] *= thischisq[h];
+                        	double thispvalue = pochisq(thischisq, 1);
+                            *outStream << setw(11) << round(exp(thisbeta), options.epsilon) << " "
+                                       << setw(11) << round(exp(thisbeta - 1.96 * thisSE), options.epsilon) << " "
+                                       << setw(11) << round(exp(thisbeta + 1.96 * thisSE), options.epsilon) << " ";
+							}
+                        }
                         if (options.testmodifiers) {
+                            double thispvalue = pochisq(thischisq[0], 1);
                             *outStream << setw(11) << round(thischisq, options.epsilon) << " "
                                        << setw(11) << round(thispvalue, options.epsilon) << " ";
                             // do we want to count these in the multiple tests??
                             //        bestpvalue=min(bestpvalue,thispvalue);
                             //        multipleTests++;
-                        }
+                    		if (typeOfPhenotype == "polytomous") {
+                    			for (int h = 1; h < K-1; h++) {
+                            	double thispvalue = pochisq(thischisq[h], 1);
+                            	*outStream << setw(11) << round(thischisq[h], options.epsilon) << " "
+                                       << setw(11) << round(thispvalue, options.epsilon) << " ";
+								}
+							}
+							}
                         *outStream << endl;
                     }
                 }
