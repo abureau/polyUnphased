@@ -285,6 +285,7 @@ void UnphasedAnalysis::score(UnphasedOptions &options, double &loglikelihood,
 						for (int h = 1; h < K-1; h++) {
                     		stderrorCovariate[j][k][i + h*nhap] = sqrt(abs(v[ix][ix]));
                     		ix--;
+					}
 					}						
                 }
             // betaparentCovariate
