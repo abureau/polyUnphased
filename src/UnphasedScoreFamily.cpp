@@ -696,7 +696,7 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                     else {
                     	virtualc[sib][v] += invVar * (sibTrait[sib] - sumIntercept) * linear[sib][v];
                     	virtualc[sib][v] -= invVar * sumIntercept * alphaterm[sib][v];
-                    	parentvirtualc[sib][v] += invVar * (sibTrait[sib] - parentSumIntercept[0]) * parentlinear[sib][v];
+                    	parentvirtualc[sib][v] += invVar * (sibTrait[sib] - parentSumIntercept) * parentlinear[sib][v];
                     }
                     if (normal) {
                         virtualc[sib][v] -= invVar * 0.5 * linear[sib][v] * linear[sib][v];
@@ -706,7 +706,7 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                         for (int sib2 = 0; sib2 < nsib; sib2++) if (sib2 != sib) {
                                 virtualc[sib][v] += invCov * (sibTrait[sib2] - sumIntercept) * linear[sib][v];
                                 virtualc[sib][v] -= invCov * sumIntercept * alphaterm[sib][v];
-                                parentvirtualc[sib][v] += invCov * (sibTrait[sib2] - parentSumIntercept[0]) * parentlinear[sib][v];
+                                parentvirtualc[sib][v] += invCov * (sibTrait[sib2] - parentSumIntercept) * parentlinear[sib][v];
                                 if (normal) {
                                     virtualc[sib][v] -= invCov * 0.5 * linear[sib][v] * linear[sib2][v];
                                     parentvirtualc[sib][v] -= invCov * 0.5 * parentlinear[sib][v] * parentlinear[sib2][v];
@@ -928,15 +928,15 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                     if (typeOfPhenotype == "polytomous") {
                                     	if (sibTrait[sib] < K) betaparentGradient[i + (sibTrait[sib]-1)*nhap] += (1 - parentSumIntercept[(sibTrait[sib]-1)*nhap]) * derivTermft;
                                     	}
-                                    else betaparentGradient[i] += invVar * (sibTrait[sib] - parentSumIntercept[0]) * derivTermft;
+                                    else betaparentGradient[i] += invVar * (sibTrait[sib] - parentSumIntercept) * derivTermft;
                                     if (options.hhrr) {
-                                        alphaGradient[i] -= invVar * parentSumIntercept[0] * derivTermft;
+                                        alphaGradient[i] -= invVar * parentSumIntercept * derivTermft;
                                     }
                                     if (invCov != 0)
                                         for (int sib2 = 0; sib2 < nsib; sib2++) if (sib2 != sib) {
-                                                betaparentGradient[i] += invCov * (sibTrait[sib2] - parentSumIntercept[0]) * derivTermft;
+                                                betaparentGradient[i] += invCov * (sibTrait[sib2] - parentSumIntercept) * derivTermft;
                                                 if (options.hhrr) {
-                                                    alphaGradient[i] -= invCov * parentSumIntercept[0] * derivTermft;
+                                                    alphaGradient[i] -= invCov * parentSumIntercept * derivTermft;
                                                 }
 
                                             }
@@ -964,15 +964,15 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                 if (typeOfPhenotype == "polytomous") {
                                     if (sibTrait[sib] < K) betaparentGradient[i + (sibTrait[sib]-1)*nhap] += (1 - parentSumIntercept[(sibTrait[sib]-1)*nhap]) * derivTermmt;
                                     }
-                                else betaparentGradient[i] += invVar * (sibTrait[sib] - parentSumIntercept[0]) * derivTermmt;
+                                else betaparentGradient[i] += invVar * (sibTrait[sib] - parentSumIntercept) * derivTermmt;
                                 if (options.hhrr) {
-                                    alphaGradient[i] -= invVar * parentSumIntercept[0] * derivTermmt;
+                                    alphaGradient[i] -= invVar * parentSumIntercept * derivTermmt;
                                 }
                                 if (invCov != 0)
                                     for (int sib2 = 0; sib2 < nsib; sib2++) if (sib2 != sib) {
-                                            betaparentGradient[i] += invCov * (sibTrait[sib2] - parentSumIntercept[0]) * derivTermmt;
+                                            betaparentGradient[i] += invCov * (sibTrait[sib2] - parentSumIntercept) * derivTermmt;
                                             if (options.hhrr) {
-                                                alphaGradient[i] -= invCov * parentSumIntercept[0] * derivTermmt;
+                                                alphaGradient[i] -= invCov * parentSumIntercept * derivTermmt;
                                             }
                                         }
 				betaparent0Gradient -= (invVar + (nsib - 1) * invCov) * betaparent[i] * derivTermmt;
@@ -1023,10 +1023,10 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                 			if (typeOfPhenotype == "polytomous") {
                                     			if (sibTrait[sib] < K) betaparentCovariateGradient[cov][level][i + (sibTrait[sib]-1)*nhap] += (1 - parentSumIntercept[sibTrait[sib]-1]) * fweight * derivTermft;
                                     			}
-                                            else betaparentCovariateGradient[cov][level][i] += invVar * (sibTrait[sib] - parentSumIntercept[0]) * fweight * derivTermft;
+                                            else betaparentCovariateGradient[cov][level][i] += invVar * (sibTrait[sib] - parentSumIntercept) * fweight * derivTermft;
                                             if (invCov != 0)
                                                 for (int sib2 = 0; sib2 < nsib; sib2++) if (sib2 != sib) {
-                                                        betaparentCovariateGradient[cov][level][i] += invCov * (sibTrait[sib2] - parentSumIntercept[0]) * fweight * derivTermft;
+                                                        betaparentCovariateGradient[cov][level][i] += invCov * (sibTrait[sib2] - parentSumIntercept) * fweight * derivTermft;
                                                     }
                                             betaparent0Gradient -= (invVar + (nsib - 1) * invCov) * betaparentCovariate[cov][level][i] * fweight * derivTermft;
                                             for (int cov2 = 0; cov2 < betaCovariate.size(); cov2++)
@@ -1054,10 +1054,10 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                 		if (typeOfPhenotype == "polytomous") {
                                     		if (sibTrait[sib] < K) betaparentCovariateGradient[cov][level][i + (sibTrait[sib]-1)*nhap] += invVar * (1 - parentSumIntercept[sibTrait[sib]-1]) * mweight * derivTermmt;
                                     	}
-                                        else betaparentCovariateGradient[cov][level][i] += invVar * (sibTrait[sib] - parentSumIntercept[0]) * mweight * derivTermmt;
+                                        else betaparentCovariateGradient[cov][level][i] += invVar * (sibTrait[sib] - parentSumIntercept) * mweight * derivTermmt;
                                         if (invCov != 0)
                                             for (int sib2 = 0; sib2 < nsib; sib2++) if (sib2 != sib) {
-                                                    betaparentCovariateGradient[cov][level][i] += invCov * (sibTrait[sib2] - parentSumIntercept[0]) * mweight * derivTermmt;
+                                                    betaparentCovariateGradient[cov][level][i] += invCov * (sibTrait[sib2] - parentSumIntercept) * mweight * derivTermmt;
                                                 }
                                         betaparent0Gradient -= (invVar + (nsib - 1) * invCov) * betaparentCovariate[cov][level][i] * mweight * derivTermmt;
                                         for (int cov2 = 0; cov2 < betaCovariate.size(); cov2++)
@@ -1150,15 +1150,15 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
 
                                                 // paternal transmission
                                                 if (!options.genotype && !MchrX) {
-                                                    betaparentGradient[whichft] += invVar * (sibTrait[sib] - parentSumIntercept[0]) * x;
+                                                    betaparentGradient[whichft] += invVar * (sibTrait[sib] - parentSumIntercept) * x;
                                                     if (options.hhrr) {
-                                                        alphaGradient[whichft] -= invVar * parentSumIntercept[0] * x;
+                                                        alphaGradient[whichft] -= invVar * parentSumIntercept * x;
                                                     }
                                                     if (invCov != 0)
                                                         for (int sib2 = 0; sib2 < nsib; sib2++) if (sib2 != sib) {
                                                                 betaparentGradient[whichft] += invCov * (sibTrait[sib2] - parentSumIntercept) * x;
                                                                 if (options.hhrr) {
-                                                                    alphaGradient[whichft] -= invCov * parentSumIntercept[0] * x;
+                                                                    alphaGradient[whichft] -= invCov * parentSumIntercept * x;
                                                                 }
                                                             }
                                                     linear[sib] += betaparent[whichft];
@@ -1175,15 +1175,15 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                                         }
                                                 }
                                                 // maternal transmission
-                                                betaparentGradient[whichmt] += invVar * (sibTrait[sib] - parentSumIntercept[0]) * x;
+                                                betaparentGradient[whichmt] += invVar * (sibTrait[sib] - parentSumIntercept) * x;
                                                 if (options.hhrr) {
-                                                    alphaGradient[whichmt] -= invVar * parentSumIntercept[0] * x;
+                                                    alphaGradient[whichmt] -= invVar * parentSumIntercept * x;
                                                 }
                                                 if (invCov != 0)
                                                     for (int sib2 = 0; sib2 < nsib; sib2++) if (sib2 != sib) {
-                                                            betaparentGradient[whichmt] += invCov * (sibTrait[sib2] - parentSumIntercept[0]) * x;
+                                                            betaparentGradient[whichmt] += invCov * (sibTrait[sib2] - parentSumIntercept) * x;
                                                             if (options.hhrr) {
-                                                                alphaGradient[whichmt] -= invCov * parentSumIntercept[0] * x;
+                                                                alphaGradient[whichmt] -= invCov * parentSumIntercept * x;
                                                             }
                                                         }
                                                 linear[sib] += betaparent[whichmt];
@@ -1231,10 +1231,10 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                                         }
                                                     } else {
                                                         if (!options.genotype && !MchrX) {
-                                                            betaparentCovariateGradient[cov][level][whichft] += invVar * (sibTrait[sib] - parentSumIntercept[0]) * fweight * x;
+                                                            betaparentCovariateGradient[cov][level][whichft] += invVar * (sibTrait[sib] - parentSumIntercept) * fweight * x;
                                                             if (invCov != 0)
                                                                 for (int sib2 = 0; sib2 < nsib; sib2++) if (sib2 != sib) {
-                                                                        betaparentCovariateGradient[cov][level][whichft] += invCov * (sibTrait[sib2] - parentSumIntercept[0]) * fweight * x;
+                                                                        betaparentCovariateGradient[cov][level][whichft] += invCov * (sibTrait[sib2] - parentSumIntercept) * fweight * x;
                                                                     }
                                                             linear[sib] += fweight * betaparentCovariate[cov][level][whichft];
                                                             betaparent0Gradient -= (invVar + (nsib - 1) * invCov) * betaparentCovariate[cov][level][whichft] * fweight * x;
@@ -1243,10 +1243,10 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                                                     betaparentCovariate0Gradient[cov2][level2] -= (invVar + (nsib - 1) * invCov) * betaparentCovariate[cov][level][whichft] * fweight * x;
                                                                 }
                                                         }
-                                                        betaparentCovariateGradient[cov][level][whichmt] += invVar * (sibTrait[sib] - parentSumIntercept[0]) * mweight * x;
+                                                        betaparentCovariateGradient[cov][level][whichmt] += invVar * (sibTrait[sib] - parentSumIntercept) * mweight * x;
                                                         if (invCov != 0)
                                                             for (int sib2 = 0; sib2 < nsib; sib2++) if (sib2 != sib) {
-                                                                    betaparentCovariateGradient[cov][level][whichmt] += invCov * (sibTrait[sib2] - parentSumIntercept[0]) * mweight * x;
+                                                                    betaparentCovariateGradient[cov][level][whichmt] += invCov * (sibTrait[sib2] - parentSumIntercept) * mweight * x;
                                                                 }
                                                         linear[sib] += mweight * betaparentCovariate[cov][level][whichmt];
                                                         betaparent0Gradient -= (invVar + (nsib - 1) * invCov) * betaparentCovariate[cov][level][whichmt] * mweight * x;
