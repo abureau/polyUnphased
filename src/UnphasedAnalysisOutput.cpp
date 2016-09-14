@@ -1195,7 +1195,7 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                     	for (int h = 1; h < K-1; h++) {
 							thisbeta = betaCovariate[i][ix][k + h*nhap] - betaCovariate[i][ix][refIndex + h*nhap];
                          	thisSE = (sortedHaps[j] != reference) ? stderrorCovariate[i][ix][k + h*nhap] : 0;
-                        	double thischisq[h] = (sortedHaps[j] != reference) ? thisbeta / thisSE : 0;
+                        	thischisq[h] = (sortedHaps[j] != reference) ? thisbeta / thisSE : 0;
                         	thischisq[h] *= thischisq[h];
                             *outStream << setw(11) << round(exp(thisbeta), options.epsilon) << " "
                                        << setw(11) << round(exp(thisbeta - 1.96 * thisSE), options.epsilon) << " "
