@@ -105,17 +105,16 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
 
     // sum of intercepts
     // Pas besoin de traiter le cas polytomique ici car les *Covariate0 sont définis seulement pour les phénotypes de type "quant".
-    double sumIntercept[3| = {0,0,0};
+    double sumIntercept[3] = {0,0,0};
     sumIntercept[0] = alpha0;
     for (int cov = 0; cov < betaCovariate.size(); cov++)
         for (int level = 0; level < betaCovariate[cov].size(); level++) {
             sumIntercept[0] += betaCovariate0[cov][level];
         }
-    double parentSumIntercept[3] = {0,0,0};
-    parentSumIntercept[0] = betaparent0;
+    double parentSumIntercept = betaparent0;
     for (int cov = 0; cov < betaCovariate.size(); cov++)
         for (int level = 0; level < betaCovariate[cov].size(); level++) {
-            parentSumIntercept[0] += betaparentCovariate0[cov][level];
+            parentSumIntercept += betaparentCovariate0[cov][level];
         }
 
     int nphase = 1 << (nsib - 1); // 2^(nsib-1) = number of phases in sibship
