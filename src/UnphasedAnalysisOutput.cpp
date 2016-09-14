@@ -1089,7 +1089,7 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
 					if (typeOfPhenotype == "polytomous") {
 					*outStream << "Omnibus Wald test of zero offsets:" << endl;
                     	for (int h = 0; h < K-1; h++) {
-							thispvalue = pochisq(waldchisq[h], walddf);
+							double thispvalue = pochisq(waldchisq[h], walddf);
                     		*outStream << "Level " << h+1 << "chisq = " << round(waldchisq[h], options.epsilon) << " " << " df = " << walddf << " " << "p-value = " << round(thispvalue, options.epsilon) << endl;
 						}
 					}
