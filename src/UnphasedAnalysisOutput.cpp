@@ -1078,7 +1078,7 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                          	thisSE = (sortedHaps[j] != reference) ? stderrorCovariate[i][ix][k + h*nhap] : 0;
                         	if (sortedHaps[j] != reference) {
                             	waldchisq[h] += thisfreq * thisfreq / thisSE / thisSE;
-                        	} */
+                        	}
                         	*outStream << setw(11) << round(thisfreq, options.epsilon) << " "
                                    		<< setw(11) << round(thisSE, options.epsilon) << " ";
 						}
