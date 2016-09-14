@@ -105,11 +105,10 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
 
     // sum of intercepts
     // Pas besoin de traiter le cas polytomique ici car les *Covariate0 sont définis seulement pour les phénotypes de type "quant".
-    double sumIntercept[3] = {0,0,0};
-    sumIntercept[0] = alpha0;
+    double sumIntercept = alpha0;
     for (int cov = 0; cov < betaCovariate.size(); cov++)
         for (int level = 0; level < betaCovariate[cov].size(); level++) {
-            sumIntercept[0] += betaCovariate0[cov][level];
+            sumIntercept += betaCovariate0[cov][level];
         }
     double parentSumIntercept = betaparent0;
     for (int cov = 0; cov < betaCovariate.size(); cov++)
@@ -690,13 +689,13 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                 for (int v = 0; v < 4; v++) {
                 	if (typeOfPhenotype == "polytomous") {
                 		if (sibTrait[sib] < K) { 
-                			virtualc[sib][v] += (1 - sumIntercept[sibTrait[sib]-1]) * linear[sib][v];
-                			parentvirtualc[sib][v] += (1 - parentSumIntercept[sibTrait[sib]-1]) * parentlinear[sib][v];
+                			virtualc[sib][v] += linear[sib][v];
+                			parentvirtualc[sib][v] += parentlinear[sib][v];
                 			}
                 		}
                     else {
-                    	virtualc[sib][v] += invVar * (sibTrait[sib] - sumIntercept[0]) * linear[sib][v];
-                    	virtualc[sib][v] -= invVar * sumIntercept[0] * alphaterm[sib][v];
+                    	virtualc[sib][v] += invVar * (sibTrait[sib] - sumIntercept) * linear[sib][v];
+                    	virtualc[sib][v] -= invVar * sumIntercept * alphaterm[sib][v];
                     	parentvirtualc[sib][v] += invVar * (sibTrait[sib] - parentSumIntercept[0]) * parentlinear[sib][v];
                     }
                     if (normal) {
@@ -705,8 +704,8 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                     }
                     if (invCov != 0)
                         for (int sib2 = 0; sib2 < nsib; sib2++) if (sib2 != sib) {
-                                virtualc[sib][v] += invCov * (sibTrait[sib2] - sumIntercept[0]) * linear[sib][v];
-                                virtualc[sib][v] -= invCov * sumIntercept[0] * alphaterm[sib][v];
+                                virtualc[sib][v] += invCov * (sibTrait[sib2] - sumIntercept) * linear[sib][v];
+                                virtualc[sib][v] -= invCov * sumIntercept * alphaterm[sib][v];
                                 parentvirtualc[sib][v] += invCov * (sibTrait[sib2] - parentSumIntercept[0]) * parentlinear[sib][v];
                                 if (normal) {
                                     virtualc[sib][v] -= invCov * 0.5 * linear[sib][v] * linear[sib2][v];
@@ -1532,14 +1531,14 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                 for (int i = 0; i < 2; i++)
                     if (i == 1 || !options.genotype && !MchrX) {
                     	if (typeOfPhenotype == "polytomous") {
-                    		if (sibTrait[sib] < K) betaGradient[whichHaps[i][0][0] + (sibTrait[sib]-1)*nhap] -= (1 - sumIntercept[sibTrait[sib]-1]) * sumX;
+                    		if (sibTrait[sib] < K) betaGradient[whichHaps[i][0][0] + (sibTrait[sib]-1)*nhap] -= sumX;
                     		}
-                        else betaGradient[whichHaps[i][0][0]] -= invVar * (sibTrait[sib] - sumIntercept[0]) * sumX;
-                        alphaGradient[whichHaps[i][0][0]] += invVar * sumIntercept[0] * sumX;
+                        else betaGradient[whichHaps[i][0][0]] -= invVar * (sibTrait[sib] - sumIntercept) * sumX;
+                        alphaGradient[whichHaps[i][0][0]] += invVar * sumIntercept * sumX;
                         if (invCov != 0)
                             for (int sib2 = 0; sib2 < nsib; sib2++) if (sib2 != sib) {
-                                    betaGradient[whichHaps[i][0][0]] -= invCov * (sibTrait[sib2] - sumIntercept[0]) * sumX;
-                                    alphaGradient[whichHaps[i][0][0]] += invCov * sumIntercept[0] * sumX;
+                                    betaGradient[whichHaps[i][0][0]] -= invCov * (sibTrait[sib2] - sumIntercept) * sumX;
+                                    alphaGradient[whichHaps[i][0][0]] += invCov * sumIntercept * sumX;
                                 }
                         double tmp = (invVar + (nsib - 1) * invCov) * (beta[whichHaps[i][0][0]] + alpha[whichHaps[i][0][0]]) * sumX;
                         alpha0Gradient += tmp;
@@ -1633,14 +1632,14 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                             if (i == 1 || !options.genotype && !MchrX) {
                         		if (typeOfPhenotype == "polytomous") {
                                     if (sibTrait[sib] < K) { 
-                                        betaCovariateGradient[cov][level][whichHaps[i][0][0] + (sibTrait[sib]-1)*nhap] -= (1 - sumIntercept[sibTrait[sib]-1]) * weight[i] * sumX;
+                                        betaCovariateGradient[cov][level][whichHaps[i][0][0] + (sibTrait[sib]-1)*nhap] -= sumX;
                         				}
                         			}
                             	else {
-                                betaCovariateGradient[cov][level][whichHaps[i][0][0]] -= invVar * (sibTrait[sib] - sumIntercept[0]) * weight[i] * sumX;
+                                betaCovariateGradient[cov][level][whichHaps[i][0][0]] -= invVar * (sibTrait[sib] - sumIntercept) * weight[i] * sumX;
                                 if (invCov != 0)
                                     for (int sib2 = 0; sib2 < nsib; sib2++) if (sib2 != sib) {
-                                            betaCovariateGradient[cov][level][whichHaps[i][0][0]] -= invCov * (sibTrait[sib2] - sumIntercept[0]) * weight[i] * sumX;
+                                            betaCovariateGradient[cov][level][whichHaps[i][0][0]] -= invCov * (sibTrait[sib2] - sumIntercept) * weight[i] * sumX;
                                         }
 								}
                                 double tmp = (invVar + (nsib - 1) * invCov) * betaCovariate[cov][level][whichHaps[i][0][0]] * weight[i] * sumX;
@@ -1749,17 +1748,17 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
             for (int sib = 0; sib < nsib; sib++)
                 for (int v = 0; v < 4; v++) {
                 	if (typeOfPhenotype == "polytomous") {
-                	   if (sibTrait[sib] < K) virtualc[sib][v] += (1 - sumIntercept[sibTrait[sib]-1]) * linear[sib][v];
+                	   if (sibTrait[sib] < K) virtualc[sib][v] += linear[sib][v];
                 	   }
-                    else virtualc[sib][v] += invVar * (sibTrait[sib] - sumIntercept[0]) * linear[sib][v];
-                    virtualc[sib][v] -= invVar * sumIntercept[0] * alphaterm[sib][v];
+                    else virtualc[sib][v] += invVar * (sibTrait[sib] - sumIntercept) * linear[sib][v];
+                    virtualc[sib][v] -= invVar * sumIntercept * alphaterm[sib][v];
                     if (normal) {
                         virtualc[sib][v] -= invVar * 0.5 * linear[sib][v] * linear[sib][v];
                     }
                     if (invCov != 0)
                         for (int sib2 = 0; sib2 < nsib; sib2++) if (sib2 != sib) {
-                                virtualc[sib][v] += invCov * (sibTrait[sib2] - sumIntercept[0]) * linear[sib][v];
-                                virtualc[sib][v] -= invCov * sumIntercept[0] * alphaterm[sib][v];
+                                virtualc[sib][v] += invCov * (sibTrait[sib2] - sumIntercept) * linear[sib][v];
+                                virtualc[sib][v] -= invCov * sumIntercept * alphaterm[sib][v];
                                 if (normal) {
                                     virtualc[sib][v] -= invCov * 0.5 * linear[sib2][v] * linear[sib][v];
                                 }
@@ -1835,18 +1834,18 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                     if (i == 1 || !options.genotype && !MchrX) {
                                         // haplotype effects
                                         if (typeOfPhenotype == "polytomous") {
-                                        	if (sibTrait[sib] < K) betaGradient[whichHaps[i][j][k] + (sibTrait[sib]-1)*nhap] += sumX * (1 - sumIntercept[sibTrait[sib]-1]) *condLhd[j*2+k];
+                                        	if (sibTrait[sib] < K) betaGradient[whichHaps[i][j][k] + (sibTrait[sib]-1)*nhap] += sumX * condLhd[j*2+k];
                                         	}
-                                        else betaGradient[whichHaps[i][j][k]] += invVar * sumX * (sibTrait[sib] - sumIntercept[0]) * condLhd[j*2+k];
-                                        alphaGradient[whichHaps[i][j][k]] -= invVar * sumX * sumIntercept[0] * condLhd[j*2+k];
+                                        else betaGradient[whichHaps[i][j][k]] += invVar * sumX * (sibTrait[sib] - sumIntercept) * condLhd[j*2+k];
+                                        alphaGradient[whichHaps[i][j][k]] -= invVar * sumX * sumIntercept * condLhd[j*2+k];
 
                                         if (normal) {
                                             betaGradient[whichHaps[i][j][k]] -= invVar * sumX * linear[sib][j*2+k] * condLhd[j*2+k];
                                         }
                                         if (invCov != 0)
                                             for (int sib2 = 0; sib2 < nsib; sib2++) if (sib2 != sib) {
-                                                    betaGradient[whichHaps[i][j][k]] += invCov * sumX * (sibTrait[sib2] - sumIntercept[0]) * condLhd[j*2+k];
-                                                    alphaGradient[whichHaps[i][j][k]] -= invCov * sumX * sumIntercept[0] * condLhd[j*2+k];
+                                                    betaGradient[whichHaps[i][j][k]] += invCov * sumX * (sibTrait[sib2] - sumIntercept) * condLhd[j*2+k];
+                                                    alphaGradient[whichHaps[i][j][k]] -= invCov * sumX * sumIntercept * condLhd[j*2+k];
                                                     if (normal) {
                                                         betaGradient[whichHaps[i][j][k]] -= invCov * sumX * linear[sib2][j*2+k] * condLhd[j*2+k];
                                                     }
@@ -1912,11 +1911,19 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                                 }
                                             }
                                             if (!confounder[cov]) {
-                                                betaCovariateGradient[cov][level][whichHaps[i][j][k]] += invVar * sumX * (sibTrait[sib] - sumIntercept) * weight[i] * condLhd[j*2+k];
+                                        		if (typeOfPhenotype == "polytomous") {
+                                        			if (sibTrait[sib] < K) {
+	                                            		betaCovariateGradient[cov][level][whichHaps[i][j][k] + (sibTrait[sib]-1)*nhap] += sumX * weight[i] * condLhd[j*2+k];
+                                                		betaparentCovariateGradient[cov][level][whichHaps[i][j][k] + (sibTrait[sib]-1)*nhap] -= x[j*2+k] * weight[i];
+													}                                        			
+                                        		}
+                                        		else {
+	                                            betaCovariateGradient[cov][level][whichHaps[i][j][k]] += invVar * sumX * (sibTrait[sib] - sumIntercept) * weight[i] * condLhd[j*2+k];
                                                 betaparentCovariateGradient[cov][level][whichHaps[i][j][k]] -= invVar * x[j*2+k] * (sibTrait[sib] - parentSumIntercept) * weight[i];
                                                 if (normal) {
                                                     betaCovariateGradient[cov][level][whichHaps[i][j][k]] -= invVar * sumX * linear[sib][j*2+k] * condLhd[j*2+k] * weight[i];
                                                     betaparentCovariateGradient[cov][level][whichHaps[i][j][k]] += invVar * x[j*2+k] * parentlinear[sib][j*2+k] * weight[i];
+                                                }
                                                 }
 
                                                 double tmp = (invVar + (nsib - 1) * invCov) * sumX * betaCovariate[cov][level][whichHaps[i][j][k]] * weight[i] * condLhd[j*2+k];
