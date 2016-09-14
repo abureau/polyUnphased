@@ -791,8 +791,8 @@ double UnphasedAnalysis::evaluate(vector<double> &y, vector<double> &g,
                     betaCovariate[j][k][i] = y[ix--];
                         if (typeOfPhenotype == "polytomous")
                         	{
-                        	for (int k = 1; k < K-1; k++)
-								betaCovariate[j][k][i + k*nhap] = y[ix--];
+                        	for (int h = 1; h < K-1; h++)
+								betaCovariate[j][k][i + h*nhap] = y[ix--];
 							}
                 }
             if (haveFamilies && !confounder[j] && !options.hhrr)
@@ -800,8 +800,8 @@ double UnphasedAnalysis::evaluate(vector<double> &y, vector<double> &g,
                         betaparentCovariate[j][k][i] = y[ix--];
                         if (typeOfPhenotype == "polytomous")
                         	{
-                        	for (int k = 1; k < K-1; k++)
-								betaparentCovariate[j][k][i + k*nhap] = y[ix--];
+                        	for (int h = 1; h < K-1; h++)
+								betaparentCovariate[j][k][i + h*nhap] = y[ix--];
 							}
                     }
             if (typeOfPhenotype == "quant") {
