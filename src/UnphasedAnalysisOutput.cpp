@@ -1197,7 +1197,6 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                          	thisSE = (sortedHaps[j] != reference) ? stderrorCovariate[i][ix][k + h*nhap] : 0;
                         	double thischisq[h] = (sortedHaps[j] != reference) ? thisbeta / thisSE : 0;
                         	thischisq[h] *= thischisq[h];
-                        	double thispvalue = pochisq(thischisq, 1);
                             *outStream << setw(11) << round(exp(thisbeta), options.epsilon) << " "
                                        << setw(11) << round(exp(thisbeta - 1.96 * thisSE), options.epsilon) << " "
                                        << setw(11) << round(exp(thisbeta + 1.96 * thisSE), options.epsilon) << " ";
@@ -1205,7 +1204,7 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                         }
                         if (options.testmodifiers) {
                             double thispvalue = pochisq(thischisq[0], 1);
-                            *outStream << setw(11) << round(thischisq, options.epsilon) << " "
+                            *outStream << setw(11) << round(thischisq[0], options.epsilon) << " "
                                        << setw(11) << round(thispvalue, options.epsilon) << " ";
                             // do we want to count these in the multiple tests??
                             //        bestpvalue=min(bestpvalue,thispvalue);
