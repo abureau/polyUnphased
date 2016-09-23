@@ -232,7 +232,8 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                         }
                                     }
                                     if (typeOfPhenotype == "polytomous") sibTerm = linear;
-                                    else sibTerm = invVar * (sibTrait[sib] - parentSumIntercept) * linear;
+                                    else {
+                                    sibTerm = invVar * (sibTrait[sib] - parentSumIntercept) * linear;
                                     if (options.hhrr) {
                                         sibTerm -= invVar * parentSumIntercept * alpha[i];
                                     }
@@ -243,6 +244,7 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                                     sibTerm -= invCov * parentSumIntercept * alpha[i];
                                                 }
                                             }
+                                    }
                                     if (!options.chrX || parsex == FEMALE) {
                                         if ((phase & 1 << sib) == 0) {
                                             beta1 += freq + sibTerm;
@@ -439,6 +441,21 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                                         }
                                                     }
                                                     if (confounder[cov]) {
+                                                      if (typeOfPhenotype == "polytomous") {
+                                                        if (!options.genotype) {
+                                                            if (!MchrX) {
+                                                                freq += fweight * betaCovariate[cov][level][whichft + (sibTrait[sib]-1)*nhap] / nsib * (family.sibship ? 2 : 1);
+                                                            }
+                                                            if (!options.chrX && !family.sibship) {
+                                                                freq += fweight * betaCovariate[cov][level][whichfnt + (sibTrait[sib]-1)*nhap] / nsib * (family.sibship ? 2 : 1);
+                                                            }
+                                                        }
+                                                        freq += mweight * betaCovariate[cov][level][whichmt + (sibTrait[sib]-1)*nhap] / nsib;
+                                                        if (!family.sibship) {
+                                                            freq += mweight * betaCovariate[cov][level][whichmnt + (sibTrait[sib]-1)*nhap] / nsib * (family.sibship ? 2 : 1);
+                                                        }
+                                                      }
+                                                      else {
                                                         if (!options.genotype) {
                                                             if (!MchrX) {
                                                                 freq += fweight * betaCovariate[cov][level][whichft] / nsib * (family.sibship ? 2 : 1);
@@ -451,11 +468,20 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                                         if (!family.sibship) {
                                                             freq += mweight * betaCovariate[cov][level][whichmnt] / nsib * (family.sibship ? 2 : 1);
                                                         }
+                                                        }
                                                     } else {
+                                                      if (typeOfPhenotype == "polytomous") {
+                                                        if (!options.genotype && !MchrX) {
+                                                            linear[sib] += fweight * betaparentCovariate[cov][level][whichft + (sibTrait[sib]-1)*nhap];
+                                                        }
+                                                        linear[sib] += mweight * betaparentCovariate[cov][level][whichmt + (sibTrait[sib]-1)*nhap];
+                                                      }
+                                                    else {
                                                         if (!options.genotype && !MchrX) {
                                                             linear[sib] += fweight * betaparentCovariate[cov][level][whichft];
                                                         }
                                                         linear[sib] += mweight * betaparentCovariate[cov][level][whichmt];
+													  }                                                    
                                                     }
                                                 }
                                             }
