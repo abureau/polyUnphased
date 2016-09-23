@@ -708,6 +708,11 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                     }
                 } // for covariates
 
+			// Debugging code
+			for (int h = 0; h < 4; h++)
+				cout << parentlinear[sib][h] << << " " << flush;
+			cout << endl;
+
             } // for sib
 
             // the virtual controls
