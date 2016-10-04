@@ -1085,6 +1085,7 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                         *outStream << endl;
                     }
                 }
+            }
                 if (options.testconfounders) {
 					if (typeOfPhenotype == "polytomous") {
 					*outStream << "Omnibus Wald test of zero offsets:" << endl;
@@ -1102,7 +1103,6 @@ void UnphasedAnalysis::outputResults(vector<int> &combination, string &trait,
                     //    multipleTests++;
                 }
                 ix++;
-            }
         	}
     	}
 	}
