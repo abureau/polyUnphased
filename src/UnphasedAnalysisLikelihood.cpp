@@ -273,8 +273,8 @@ void UnphasedAnalysis::gradientFreeParameters(vector<double> &gradient,
                     g[ix--] = gradient[i+iy];
                         if (typeOfPhenotype == "polytomous")
                         	{
-                        	for (int k = 1; k < K-1; k++)
-								g[ix--] = gradient[i + iy + k*nhap];
+                        	for (int h = 1; h < K-1; h++)
+								g[ix--] = gradient[i + iy + h*nhap];
 							}                    
                 }
             iy += betasize;
@@ -283,8 +283,8 @@ void UnphasedAnalysis::gradientFreeParameters(vector<double> &gradient,
                         g[ix--] = gradient[i+iy];
                         if (typeOfPhenotype == "polytomous")
                         	{
-                        	for (int k = 1; k < K-1; k++)
-								g[ix--] = gradient[i + iy + k*nhap];
+                        	for (int h = 1; h < K-1; h++)
+								g[ix--] = gradient[i + iy + h*nhap];
 							}                    
                     }
                 iy += betasize;
