@@ -1431,10 +1431,20 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                 for (int k = 0; k < betaCovariate[j].size(); k++) {
                     for (int l = 0; l < nhap; l++) {
                         globalGrad[i][ix++] += betaCovariateGradient[j][k][l];
+                        if (typeOfPhenotype == "polytomous")
+                           {
+                           for (int h = 1; h < K-1; h++) 
+                              globalGrad[i][ix++] += betaCovariateGradient[j][k][l + h*nhap];
+						   }
                     }
                     if (!confounder[j] && haveFamilies && !options.hhrr)
                         for (int l = 0; l < nhap; l++) {
                             globalGrad[i][ix++] += betaparentCovariateGradient[j][k][l];
+                            if (typeOfPhenotype == "polytomous")
+                              {
+                              for (int h = 1; h < K-1; h++) 
+                                 globalGrad[i][ix++] += betaparentCovariateGradient[j][k][l + h*nhap];
+						      }
                         }
                     if (typeOfPhenotype == "quant") {
                         globalGrad[i][ix++] += betaCovariate0Gradient[j][k];
@@ -2013,12 +2023,22 @@ typeOfPhenotype == "quant" */
     }
     for (int i = 0; i < betaCovariate.size(); i++)
         for (int j = 0; j < betaCovariate[i].size(); j++) {
-            for (int k = 0; k < betasize; k++) {
+            for (int k = 0; k < nhap; k++) {
                 gradient[ix++] += betaCovariateGradient[i][j][k];
+                        if (typeOfPhenotype == "polytomous")
+                           {
+                           for (int h = 1; h < K-1; h++) 
+                              gradient[ix++] += betaCovariateGradient[i][j][k + h*nhap];
+						   }
             }
             if (!confounder[i] && haveFamilies && !options.hhrr)
-                for (int k = 0; k < betasize; k++) {
+                for (int k = 0; k < nhap; k++) {
                     gradient[ix++] += betaparentCovariateGradient[i][j][k];
+                        if (typeOfPhenotype == "polytomous")
+                           {
+                           for (int h = 1; h < K-1; h++) 
+                              gradient[ix++] += betaparentCovariateGradient[i][j][k + h*nhap];
+						   }
                 }
             if (typeOfPhenotype == "quant") {
                 gradient[ix++] += betaCovariate0Gradient[i][j];
