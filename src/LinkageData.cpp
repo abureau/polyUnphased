@@ -296,10 +296,19 @@ void LinkageData::readpedfile(string &filename, string &bedfilename) {
         idList.push_back(pedigree[name].size());
         pedigree[name].push_back(subject);
     } // while line
+    
+    // Décalage du 1er marqueur si plus d'un locus de maladie
+    int marker_init = 0;
+    int i = 0;
+    while (locus[i].type==1) 
+	{
+		i++;
+		marker_init++;
+	}	
 
     // detect SNP-major or individual-major mode
     if (bedfile.get()) {
-        for (int i = 1; i < nlocus; i++) {
+        for (int i = marker_init; i < nlocus; i++) {
             for (int subject = 0; subject < nameList.size(); subject += 4) {
                 int byte = bedfile.get();
                 for (int j = 0; subject + j < nameList.size() && j < 4; j++) {
@@ -332,7 +341,7 @@ void LinkageData::readpedfile(string &filename, string &bedfilename) {
     } // SNP-major
     else {
         for (int subject = 0; subject < nameList.size(); subject++) {
-            for (int i = 1; i < nlocus; i += 4) {
+            for (int i = marker_init; i < nlocus; i += 4) {
                 int byte = bedfile.get();
                 for (int j = 0; i + j < nlocus && j < 4; j++) {
                     // marker alleles
