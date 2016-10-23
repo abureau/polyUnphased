@@ -260,7 +260,7 @@ void LinkageData::readpedfile(string &filename, string &bedfilename) {
         subject.sex = atoi(buf);
 
         // locus info
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < nlocus; i++) {
             switch (locus[i].type) {
             case 4:
             case 0: {
