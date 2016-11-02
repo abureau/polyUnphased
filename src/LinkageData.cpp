@@ -137,7 +137,7 @@ void LinkageData::readpedfile(string &filename) {
                     *outStream << "\nPedigree file error: value > 4 for an affection locus: " << locus[i].name.c_str() << endl;
                     exit(-1);
                 }
-                if ((int) atoi(buf) > 4) {
+                if ((int) atoi(buf) < 0) {
                     *outStream << "\nPedigree file error: negative value for an affection locus: " << locus[i].name.c_str() << endl;
                     exit(-1);
                 }
@@ -206,6 +206,9 @@ void LinkageData::readpedfile(string &filename, string &bedfilename) {
     }
 
     *outStream << "Reading binary pedigree files " << filename << ", " << bedfilename << "..." << flush;
+
+	Kvec.resize(nlocus);
+    for (int i = 0; i < nlocus; i++) Kvec[i] = 2;
 
     int magic1 = bedfile.get();
     int magic2 = bedfile.get();
@@ -286,6 +289,16 @@ void LinkageData::readpedfile(string &filename, string &bedfilename) {
                     exit(-1);
                 }
                 //subject.affection.insert(make_pair(locus[i].name,atoi(buf)));
+                if ((int) atoi(buf) > 4) {
+                    *outStream << "\nPedigree file error: value > 4 for an affection locus: " << locus[i].name.c_str() << endl;
+                    exit(-1);
+                }
+                if ((int) atoi(buf) < 0) {
+                    *outStream << "\nPedigree file error: negative value for an affection locus: " << locus[i].name.c_str() << endl;
+                    exit(-1);
+                }
+                // Déterminer la valeur maximale du phénotype dans Kvec
+                if ((int) atoi(buf) > Kvec[i]) Kvec[i] = (int) atoi(buf);
                 subject.affection.push_back(atoi(buf));
                 break;
             }
