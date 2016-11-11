@@ -33,8 +33,8 @@ JAR=jar
 
 #SYNTAX=-fsyntax-only
 
-#OPTIONS =  -Wno-deprecated -O3
-OPTIONS =  -Wno-deprecated -g
+OPTIONS =  -Wno-deprecated -O3
+#OPTIONS =  -Wno-deprecated -g
 
 polyunphased: polyunphased.cpp UnphasedOptions.o LinkageData.o NuclearFamily.o Haplotype.o UnphasedAnalysis.o UnphasedAnalysisModels.o UnphasedAnalysisExploratory.o UnphasedAnalysisLikelihood.o UnphasedAnalysisOutput.o matinv.o pvalues.o asran.o UnphasedScore.o UnphasedScoreFamily.o UnphasedScoreUnrelated.o 
 	$(CCC) -o polyunphased polyunphased.cpp UnphasedOptions.o LinkageData.o NuclearFamily.o Haplotype.o UnphasedAnalysis.o UnphasedAnalysisModels.o UnphasedAnalysisExploratory.o UnphasedAnalysisLikelihood.o UnphasedAnalysisOutput.o UnphasedScore.o UnphasedScoreFamily.o UnphasedScoreUnrelated.o pvalues.o asran.o matinv.o $(SYNTAX) $(OPTIONS)
