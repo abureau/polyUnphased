@@ -227,11 +227,11 @@ void UnphasedAnalysis::resizeArrays() {
     stderror = 0;
     for (int i = 0; i < betaCovariate.size(); i++)
         for (int j = 0; j < betaCovariate[i].size(); j++) {
-            betaCovariate[i][j].resize(size);
+            betaCovariate[i][j].resize(size*(K-1));
             betaCovariate[i][j] = 0;
-            betaparentCovariate[i][j].resize(size);
+            betaparentCovariate[i][j].resize(size*(K-1));
             betaparentCovariate[i][j] = 0;
-            stderrorCovariate[i][j].resize(size);
+            stderrorCovariate[i][j].resize(size*(K-1));
             stderrorCovariate[i][j] = 0;
         }
 

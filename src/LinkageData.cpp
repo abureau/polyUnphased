@@ -137,7 +137,7 @@ void LinkageData::readpedfile(string &filename) {
                     *outStream << "\nPedigree file error: value > 4 for an affection locus: " << locus[i].name.c_str() << endl;
                     exit(-1);
                 }
-                if ((int) atoi(buf) > 4) {
+                if ((int) atoi(buf) < 0) {
                     *outStream << "\nPedigree file error: negative value for an affection locus: " << locus[i].name.c_str() << endl;
                     exit(-1);
                 }
@@ -207,6 +207,9 @@ void LinkageData::readpedfile(string &filename, string &bedfilename) {
 
     *outStream << "Reading binary pedigree files " << filename << ", " << bedfilename << "..." << flush;
 
+	Kvec.resize(nlocus);
+    for (int i = 0; i < nlocus; i++) Kvec[i] = 2;
+
     int magic1 = bedfile.get();
     int magic2 = bedfile.get();
     if (magic1 != 108 || magic2 != 27) {
@@ -260,7 +263,7 @@ void LinkageData::readpedfile(string &filename, string &bedfilename) {
         subject.sex = atoi(buf);
 
         // locus info
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < nlocus; i++) {
             switch (locus[i].type) {
             case 4:
             case 0: {
@@ -286,6 +289,16 @@ void LinkageData::readpedfile(string &filename, string &bedfilename) {
                     exit(-1);
                 }
                 //subject.affection.insert(make_pair(locus[i].name,atoi(buf)));
+                if ((int) atoi(buf) > 4) {
+                    *outStream << "\nPedigree file error: value > 4 for an affection locus: " << locus[i].name.c_str() << endl;
+                    exit(-1);
+                }
+                if ((int) atoi(buf) < 0) {
+                    *outStream << "\nPedigree file error: negative value for an affection locus: " << locus[i].name.c_str() << endl;
+                    exit(-1);
+                }
+                // Déterminer la valeur maximale du phénotype dans Kvec
+                if ((int) atoi(buf) > Kvec[i]) Kvec[i] = (int) atoi(buf);
                 subject.affection.push_back(atoi(buf));
                 break;
             }
@@ -296,10 +309,19 @@ void LinkageData::readpedfile(string &filename, string &bedfilename) {
         idList.push_back(pedigree[name].size());
         pedigree[name].push_back(subject);
     } // while line
+    
+    // D�calage du 1er marqueur si plus d'un locus de maladie
+    int marker_init = 0;
+    int i = 0;
+    while (locus[i].type==1) 
+	{
+		i++;
+		marker_init++;
+	}	
 
     // detect SNP-major or individual-major mode
     if (bedfile.get()) {
-        for (int i = 1; i < nlocus; i++) {
+        for (int i = marker_init; i < nlocus; i++) {
             for (int subject = 0; subject < nameList.size(); subject += 4) {
                 int byte = bedfile.get();
                 for (int j = 0; subject + j < nameList.size() && j < 4; j++) {
@@ -332,7 +354,7 @@ void LinkageData::readpedfile(string &filename, string &bedfilename) {
     } // SNP-major
     else {
         for (int subject = 0; subject < nameList.size(); subject++) {
-            for (int i = 1; i < nlocus; i += 4) {
+            for (int i = marker_init; i < nlocus; i += 4) {
                 int byte = bedfile.get();
                 for (int j = 0; i + j < nlocus && j < 4; j++) {
                     // marker alleles

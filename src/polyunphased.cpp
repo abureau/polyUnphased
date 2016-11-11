@@ -42,7 +42,7 @@ using namespace std;
 
 int main(int argc, char **argv) {
 
-    const string VERSION = "1.1";
+    const string VERSION = "1.2";
 
     UnphasedOptions options(argc, argv);
     ostream *outStream;

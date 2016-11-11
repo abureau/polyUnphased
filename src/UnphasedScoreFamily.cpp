@@ -100,16 +100,17 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
         invCov = 0;
         invVar = 1;
     }
+    int nconfounder = options.confounder.size(); // number of confounders
+    int nmodifier = options.modifier.size(); // number of modifiers
 
     // sum of intercepts
-    double sumIntercept = 0;
-    sumIntercept = alpha0;
+    // Pas besoin de traiter le cas polytomique ici car les *Covariate0 sont d伺inis seulement pour les ph始otypes de type "quant".
+    double sumIntercept = alpha0;
     for (int cov = 0; cov < betaCovariate.size(); cov++)
         for (int level = 0; level < betaCovariate[cov].size(); level++) {
             sumIntercept += betaCovariate0[cov][level];
         }
-    double parentSumIntercept = 0;
-    parentSumIntercept = betaparent0;
+    double parentSumIntercept = betaparent0;
     for (int cov = 0; cov < betaCovariate.size(); cov++)
         for (int level = 0; level < betaCovariate[cov].size(); level++) {
             parentSumIntercept += betaparentCovariate0[cov][level];
@@ -129,8 +130,6 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
     int betasize;
     if (typeOfPhenotype == "polytomous") betasize = nhap*(K-1);
     else betasize = nhap;
-    int nconfounder = options.confounder.size(); // number of confounders
-    int nmodifier = options.modifier.size(); // number of modifiers
 
     realisationProb[nfamily].clear(); // probs of different realisations
 
@@ -221,13 +220,20 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                             }
                                         }
                                         if (confounder[cov]) {
-                                            freq += weight * betaCovariate[cov][level][i] / nsib * (family.sibship ? 2 : 1);
+                                        	if (typeOfPhenotype == "polytomous") {
+                                        		if (sibTrait[sib] < K) freq += weight * betaCovariate[cov][level][i + (sibTrait[sib]-1)*nhap] / nsib * (family.sibship ? 2 : 1);
+                                        		}
+                                            else freq += weight * betaCovariate[cov][level][i] / nsib * (family.sibship ? 2 : 1);
                                         } else {
-                                            linear += weight * betaparentCovariate[cov][level][i];
+                                        	if (typeOfPhenotype == "polytomous") {
+                                        		if (sibTrait[sib] < K) linear += weight * betaparentCovariate[cov][level][i + (sibTrait[sib]-1)*nhap];
+                                        		}
+                                        	else linear += weight * betaparentCovariate[cov][level][i];
                                         }
                                     }
                                     if (typeOfPhenotype == "polytomous") sibTerm = linear;
-                                    else sibTerm = invVar * (sibTrait[sib] - parentSumIntercept) * linear;
+                                    else {
+                                    sibTerm = invVar * (sibTrait[sib] - parentSumIntercept) * linear;
                                     if (options.hhrr) {
                                         sibTerm -= invVar * parentSumIntercept * alpha[i];
                                     }
@@ -238,6 +244,7 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                                     sibTerm -= invCov * parentSumIntercept * alpha[i];
                                                 }
                                             }
+                                    }
                                     if (!options.chrX || parsex == FEMALE) {
                                         if ((phase & 1 << sib) == 0) {
                                             beta1 += freq + sibTerm;
@@ -434,6 +441,21 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                                         }
                                                     }
                                                     if (confounder[cov]) {
+                                                      if (typeOfPhenotype == "polytomous") {
+                                                        if (!options.genotype) {
+                                                            if (!MchrX) {
+                                                                freq += fweight * betaCovariate[cov][level][whichft + (sibTrait[sib]-1)*nhap] / nsib * (family.sibship ? 2 : 1);
+                                                            }
+                                                            if (!options.chrX && !family.sibship) {
+                                                                freq += fweight * betaCovariate[cov][level][whichfnt + (sibTrait[sib]-1)*nhap] / nsib * (family.sibship ? 2 : 1);
+                                                            }
+                                                        }
+                                                        freq += mweight * betaCovariate[cov][level][whichmt + (sibTrait[sib]-1)*nhap] / nsib;
+                                                        if (!family.sibship) {
+                                                            freq += mweight * betaCovariate[cov][level][whichmnt + (sibTrait[sib]-1)*nhap] / nsib * (family.sibship ? 2 : 1);
+                                                        }
+                                                      }
+                                                      else {
                                                         if (!options.genotype) {
                                                             if (!MchrX) {
                                                                 freq += fweight * betaCovariate[cov][level][whichft] / nsib * (family.sibship ? 2 : 1);
@@ -446,11 +468,20 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                                         if (!family.sibship) {
                                                             freq += mweight * betaCovariate[cov][level][whichmnt] / nsib * (family.sibship ? 2 : 1);
                                                         }
+                                                        }
                                                     } else {
+                                                      if (typeOfPhenotype == "polytomous") {
+                                                        if (!options.genotype && !MchrX) {
+                                                            linear[sib] += fweight * betaparentCovariate[cov][level][whichft + (sibTrait[sib]-1)*nhap];
+                                                        }
+                                                        linear[sib] += mweight * betaparentCovariate[cov][level][whichmt + (sibTrait[sib]-1)*nhap];
+                                                      }
+                                                    else {
                                                         if (!options.genotype && !MchrX) {
                                                             linear[sib] += fweight * betaparentCovariate[cov][level][whichft];
                                                         }
                                                         linear[sib] += mweight * betaparentCovariate[cov][level][whichmt];
+													  }                                                    
                                                     }
                                                 }
                                             }
@@ -595,7 +626,7 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                         if (typeOfPhenotype == "polytomous") {
                         	if (sibTrait[sib] < K) {
                         	    if (!options.genotype && !MchrX) { // On compte l'haplotype paternel
-	                        		linear [sib][i*2+j] += beta[whichHaps[0][i][j] + (sibTrait[sib]-1)*nhap];
+	                        		linear[sib][i*2+j] += beta[whichHaps[0][i][j] + (sibTrait[sib]-1)*nhap];
 									parentlinear[sib][i*2+j] += betaparent[whichHaps[0][i][j] + (sibTrait[sib]-1)*nhap];
 									}
 								// ensuite on compte l'haplotype maternel
@@ -633,13 +664,25 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                     }
                     double covTerm[2][2][2];
                     double parentCovTerm[2][2][2];
+                    if (typeOfPhenotype == "polytomous") {
+                        if (sibTrait[sib] < K) {
+                    		for (int i = 0; i < 2; i++)
+                        		for (int j = 0; j < 2; j++)
+                            		for (int k = 0; k < 2; k++) {
+                                		covTerm[i][j][k] = weight[i] * betaCovariate[cov][level][whichHaps[i][j][k] + (sibTrait[sib]-1)*nhap];
+                                		parentCovTerm[i][j][k] = weight[i] * betaparentCovariate[cov][level][whichHaps[i][j][k] + (sibTrait[sib]-1)*nhap];
+                            		}
+						}
+					}                    
+                    else { // Phenotype is not polytomous
                     for (int i = 0; i < 2; i++)
                         for (int j = 0; j < 2; j++)
                             for (int k = 0; k < 2; k++) {
                                 covTerm[i][j][k] = weight[i] * betaCovariate[cov][level][whichHaps[i][j][k]];
                                 parentCovTerm[i][j][k] = weight[i] * betaparentCovariate[cov][level][whichHaps[i][j][k]];
                             }
-
+					}
+					
                     if (confounder[cov]) {
                         for (int i = 0; i < 2; i++)
                             for (int j = 0; j < 2; j++) {
@@ -671,8 +714,10 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
             for (int sib = 0; sib < nsib; sib++)
                 for (int v = 0; v < 4; v++) {
                 	if (typeOfPhenotype == "polytomous") {
-                		virtualc[sib][v] += linear[sib][v];
-                		parentvirtualc[sib][v] += parentlinear[sib][v];
+                		if (sibTrait[sib] < K) { 
+                			virtualc[sib][v] += linear[sib][v];
+                			parentvirtualc[sib][v] += parentlinear[sib][v];
+                			}
                 		}
                     else {
                     	virtualc[sib][v] += invVar * (sibTrait[sib] - sumIntercept) * linear[sib][v];
@@ -848,13 +893,13 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
     for (int i = 0; i < betaCovariate.size(); i++) {
         betaCovariateGradient[i].resize(betaCovariate[i].size());
         for (int j = 0; j < betaCovariate[i].size(); j++) {
-            betaCovariateGradient[i][j].resize(nhap, 0);
+            betaCovariateGradient[i][j].resize(betasize, 0);
         }
     }
     for (int i = 0; i < betaparentCovariate.size(); i++) {
         betaparentCovariateGradient[i].resize(betaparentCovariate[i].size());
         for (int j = 0; j < betaparentCovariate[i].size(); j++) {
-            betaparentCovariateGradient[i][j].resize(nhap, 0);
+            betaparentCovariateGradient[i][j].resize(betasize, 0);
         }
     }
     for (int i = 0; i < betaCovariate0.size(); i++) {
@@ -986,12 +1031,25 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                     }
                                     if (!MchrX) {
                                         if (confounder[cov]) {
+                                			if (typeOfPhenotype == "polytomous") {
+                                    			if (sibTrait[sib] < K) {
+                                            		betaCovariateGradient[cov][level][i + (sibTrait[sib]-1)*nhap] += fweight * derivTermft / nsib * (family.sibship ? 2 : 1);
+                                            		if (!options.chrX && !family.sibship) {
+                                                		betaCovariateGradient[cov][level][i + (sibTrait[sib]-1)*nhap] += fweight * derivTermfnt / nsib * (family.sibship ? 2 : 1);
+                                                	}
+                                    			}
+                                    			}
+                                    		else {
                                             betaCovariateGradient[cov][level][i] += fweight * derivTermft / nsib * (family.sibship ? 2 : 1);
                                             if (!options.chrX && !family.sibship) {
                                                 betaCovariateGradient[cov][level][i] += fweight * derivTermfnt / nsib * (family.sibship ? 2 : 1);
                                             }
+                                            }
                                         } else {
-                                            betaparentCovariateGradient[cov][level][i] += invVar * (sibTrait[sib] - parentSumIntercept) * fweight * derivTermft;
+                                			if (typeOfPhenotype == "polytomous") {
+                                    			if (sibTrait[sib] < K) betaparentCovariateGradient[cov][level][i + (sibTrait[sib]-1)*nhap] += fweight * derivTermft;
+                                    			}
+                                            else betaparentCovariateGradient[cov][level][i] += invVar * (sibTrait[sib] - parentSumIntercept) * fweight * derivTermft;
                                             if (invCov != 0)
                                                 for (int sib2 = 0; sib2 < nsib; sib2++) if (sib2 != sib) {
                                                         betaparentCovariateGradient[cov][level][i] += invCov * (sibTrait[sib2] - parentSumIntercept) * fweight * derivTermft;
@@ -1004,12 +1062,25 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                         }
                                     }
                                     if (confounder[cov]) {
-                                        betaCovariateGradient[cov][level][i] += mweight * derivTermmt / nsib * (family.sibship ? 2 : 1);
-                                        if (!family.sibship) {
-                                            betaCovariateGradient[cov][level][i] += mweight * derivTermmnt / nsib * (family.sibship ? 2 : 1);
+                           				if (typeOfPhenotype == "polytomous") {
+                                    		if (sibTrait[sib] < K) {
+                                     		betaCovariateGradient[cov][level][i + (sibTrait[sib]-1)*nhap] += mweight * derivTermmt / nsib * (family.sibship ? 2 : 1);
+                                        	if (!family.sibship) {
+                                            	betaCovariateGradient[cov][level][i + (sibTrait[sib]-1)*nhap] += mweight * derivTermmnt / nsib * (family.sibship ? 2 : 1);
+                                            	}
+                                            }
+                                            }
+                                        else {
+                                     		betaCovariateGradient[cov][level][i] += mweight * derivTermmt / nsib * (family.sibship ? 2 : 1);
+                                        	if (!family.sibship) {
+                                            	betaCovariateGradient[cov][level][i] += mweight * derivTermmnt / nsib * (family.sibship ? 2 : 1);
+                                        	}
                                         }
                                     } else {
-                                        betaparentCovariateGradient[cov][level][i] += invVar * (sibTrait[sib] - parentSumIntercept) * mweight * derivTermmt;
+                                		if (typeOfPhenotype == "polytomous") {
+                                    		if (sibTrait[sib] < K) betaparentCovariateGradient[cov][level][i + (sibTrait[sib]-1)*nhap] += invVar * mweight * derivTermmt;
+                                    	}
+                                        else betaparentCovariateGradient[cov][level][i] += invVar * (sibTrait[sib] - parentSumIntercept) * mweight * derivTermmt;
                                         if (invCov != 0)
                                             for (int sib2 = 0; sib2 < nsib; sib2++) if (sib2 != sib) {
                                                     betaparentCovariateGradient[cov][level][i] += invCov * (sibTrait[sib2] - parentSumIntercept) * mweight * derivTermmt;
@@ -1360,10 +1431,20 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                 for (int k = 0; k < betaCovariate[j].size(); k++) {
                     for (int l = 0; l < nhap; l++) {
                         globalGrad[i][ix++] += betaCovariateGradient[j][k][l];
+                        if (typeOfPhenotype == "polytomous")
+                           {
+                           for (int h = 1; h < K-1; h++) 
+                              globalGrad[i][ix++] += betaCovariateGradient[j][k][l + h*nhap];
+						   }
                     }
                     if (!confounder[j] && haveFamilies && !options.hhrr)
                         for (int l = 0; l < nhap; l++) {
                             globalGrad[i][ix++] += betaparentCovariateGradient[j][k][l];
+                            if (typeOfPhenotype == "polytomous")
+                              {
+                              for (int h = 1; h < K-1; h++) 
+                                 globalGrad[i][ix++] += betaparentCovariateGradient[j][k][l + h*nhap];
+						      }
                         }
                     if (typeOfPhenotype == "quant") {
                         globalGrad[i][ix++] += betaCovariate0Gradient[j][k];
@@ -1544,30 +1625,59 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                             for (int j = 0; j < 2; j++) {
                                 if (!options.genotype) {
                                     if (!options.chrX) {
+                        				if (typeOfPhenotype == "polytomous") {
+                                        if (sibTrait[sib] < K) { 
+                                        	betaCovariateGradient[cov][level][whichHaps[0][i][j] + (sibTrait[sib]-1)*nhap] -= weight[0] * x[i*2+j] / nsib * (family.sibship ? 2 : 1);
+                                        	if (!family.sibship) {
+                                            	betaCovariateGradient[cov][level][whichHaps[0][!i][!j] + (sibTrait[sib]-1)*nhap] -= weight[0] * x[i*2+j] / nsib * (family.sibship ? 2 : 1);
+                        					}
+                        					}
+                        					}
+                                        else {
                                         betaCovariateGradient[cov][level][whichHaps[0][i][j]] -= weight[0] * x[i*2+j] / nsib * (family.sibship ? 2 : 1);
                                         if (!family.sibship) {
                                             betaCovariateGradient[cov][level][whichHaps[0][!i][!j]] -= weight[0] * x[i*2+j] / nsib * (family.sibship ? 2 : 1);
                                         }
+                                        }
                                     } else {
                                         if (!MchrX && !family.sibship) {
-                                            betaCovariateGradient[cov][level][whichHaps[0][0][j]] -= weight[0] * x[i*2+j] / nsib * (family.sibship ? 2 : 1);
+                        					if (typeOfPhenotype == "polytomous") {
+                        						if (sibTrait[sib] < K) betaCovariateGradient[cov][level][whichHaps[0][0][j] + (sibTrait[sib]-1)*nhap] -= weight[0] * x[i*2+j] / nsib * (family.sibship ? 2 : 1);
+                        					}
+                                            else betaCovariateGradient[cov][level][whichHaps[0][0][j]] -= weight[0] * x[i*2+j] / nsib * (family.sibship ? 2 : 1);
                                         }
                                     }
                                 }
-                                betaCovariateGradient[cov][level][whichHaps[1][i][j]] -= weight[1] * x[i*2+j] / nsib * (family.sibship ? 2 : 1);
-                                if (!family.sibship) {
-                                    betaCovariateGradient[cov][level][whichHaps[1][!i][!j]] -= weight[1] * x[i*2+j] / nsib * (family.sibship ? 2 : 1);
+                        		if (typeOfPhenotype == "polytomous") {
+                                    if (sibTrait[sib] < K) {
+                                	betaCovariateGradient[cov][level][whichHaps[1][i][j] + (sibTrait[sib]-1)*nhap] -= weight[1] * x[i*2+j] / nsib * (family.sibship ? 2 : 1);
+                                	if (!family.sibship) {
+                                    	betaCovariateGradient[cov][level][whichHaps[1][!i][!j] + (sibTrait[sib]-1)*nhap] -= weight[1] * x[i*2+j] / nsib * (family.sibship ? 2 : 1);
+                                    }
+                                    }
+                                    }
+                                else { 
+                                	betaCovariateGradient[cov][level][whichHaps[1][i][j]] -= weight[1] * x[i*2+j] / nsib * (family.sibship ? 2 : 1);
+                                	if (!family.sibship) {
+                                    	betaCovariateGradient[cov][level][whichHaps[1][!i][!j]] -= weight[1] * x[i*2+j] / nsib * (family.sibship ? 2 : 1);
+									}
                                 }
                             }
                     } else {
                         for (int i = 0; i < 2; i++)
                             if (i == 1 || !options.genotype && !MchrX) {
+                        		if (typeOfPhenotype == "polytomous") {
+                                    if (sibTrait[sib] < K) { 
+                                        betaCovariateGradient[cov][level][whichHaps[i][0][0] + (sibTrait[sib]-1)*nhap] -= sumX;
+                        				}
+                        			}
+                            	else {
                                 betaCovariateGradient[cov][level][whichHaps[i][0][0]] -= invVar * (sibTrait[sib] - sumIntercept) * weight[i] * sumX;
                                 if (invCov != 0)
                                     for (int sib2 = 0; sib2 < nsib; sib2++) if (sib2 != sib) {
                                             betaCovariateGradient[cov][level][whichHaps[i][0][0]] -= invCov * (sibTrait[sib2] - sumIntercept) * weight[i] * sumX;
                                         }
-
+								}
                                 double tmp = (invVar + (nsib - 1) * invCov) * betaCovariate[cov][level][whichHaps[i][0][0]] * weight[i] * sumX;
                                 alpha0Gradient += tmp;
                                 for (int cov2 = 0; cov2 < betaCovariate.size(); cov2++)
@@ -1575,11 +1685,22 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                         betaCovariate0Gradient[cov2][level2] += tmp;
                                     }
 
+                        	if (typeOfPhenotype == "polytomous") {
+                    			if (sibTrait[sib] < K) {
+	                        		for (int j = 0; j < 2; j++)
+	                            		for (int k = 0; k < 2; k++) {
+	                                	linear[sib][j*2+k] += weight[i] * betaCovariate[cov][level][whichHaps[i][j][k] + (sibTrait[sib]-1)*nhap];
+	                                	parentlinear[sib][j*2+k] += weight[i] * betaparentCovariate[cov][level][whichHaps[i][j][k] + (sibTrait[sib]-1)*nhap];
+									}
+								}
+							}
+							else {                    		
                                 for (int j = 0; j < 2; j++)
                                     for (int k = 0; k < 2; k++) {
                                         linear[sib][j*2+k] += weight[i] * betaCovariate[cov][level][whichHaps[i][j][k]];
                                         parentlinear[sib][j*2+k] += weight[i] * betaparentCovariate[cov][level][whichHaps[i][j][k]];
                                     }
+                                }
                             }
                     }
 
@@ -1662,7 +1783,9 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
             }
             for (int sib = 0; sib < nsib; sib++)
                 for (int v = 0; v < 4; v++) {
-                	if (typeOfPhenotype == "polytomous") virtualc[sib][v] += linear[sib][v];
+                	if (typeOfPhenotype == "polytomous") {
+                	   if (sibTrait[sib] < K) virtualc[sib][v] += linear[sib][v];
+                	   }
                     else virtualc[sib][v] += invVar * (sibTrait[sib] - sumIntercept) * linear[sib][v];
                     virtualc[sib][v] -= invVar * sumIntercept * alphaterm[sib][v];
                     if (normal) {
@@ -1765,6 +1888,7 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                                 }
 
                                         alpha0Gradient -= (invVar + (nsib - 1) * invCov) * sumX * (beta[whichHaps[i][j][k]] + alpha[whichHaps[i][j][k]]) * condLhd[j*2+k];
+                						// Pas de alpha0 avec ph始otype polytomique, donc ne pas adapter ce calcul ne devrait pas avoir de cons子uence. 
                                         for (int cov = 0; cov < betaCovariate.size(); cov++)
                                             for (int level = 0; level < betaCovariate[cov].size(); level++) {
                                                 betaCovariate0Gradient[cov][level] -= (invVar + (nsib - 1) * invCov) * sumX * (beta[whichHaps[i][j][k]] + alpha[whichHaps[i][j][k]]) * condLhd[j*2+k];
@@ -1795,6 +1919,7 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                         if (options.hhrr) {
                                             betaparent0Gradient += (invVar + (nsib - 1) * invCov) * alpha[whichHaps[i][j][k]] * x[j*2+k];
                                         }
+                						// Pas de alpha0 avec ph始otype polytomique, donc ne pas adapter ce calcul ne devrait pas avoir de cons子uence. 
                                         for (int cov = 0; cov < betaCovariate.size(); cov++)
                                             for (int level = 0; level < betaCovariate[cov].size(); level++) {
                                                 betaparentCovariate0Gradient[cov][level] += (invVar + (nsib - 1) * invCov) * betaparent[whichHaps[i][j][k]] * x[j*2+k];
@@ -1822,11 +1947,19 @@ void UnphasedAnalysis::scoreFamily(NuclearFamily &family, int nfamily,
                                                 }
                                             }
                                             if (!confounder[cov]) {
-                                                betaCovariateGradient[cov][level][whichHaps[i][j][k]] += invVar * sumX * (sibTrait[sib] - sumIntercept) * weight[i] * condLhd[j*2+k];
+                                        		if (typeOfPhenotype == "polytomous") {
+                                        			if (sibTrait[sib] < K) {
+	                                            		betaCovariateGradient[cov][level][whichHaps[i][j][k] + (sibTrait[sib]-1)*nhap] += sumX * weight[i] * condLhd[j*2+k];
+                                                		betaparentCovariateGradient[cov][level][whichHaps[i][j][k] + (sibTrait[sib]-1)*nhap] -= x[j*2+k] * weight[i];
+													}                                        			
+                                        		}
+                                        		else {
+	                                            betaCovariateGradient[cov][level][whichHaps[i][j][k]] += invVar * sumX * (sibTrait[sib] - sumIntercept) * weight[i] * condLhd[j*2+k];
                                                 betaparentCovariateGradient[cov][level][whichHaps[i][j][k]] -= invVar * x[j*2+k] * (sibTrait[sib] - parentSumIntercept) * weight[i];
                                                 if (normal) {
                                                     betaCovariateGradient[cov][level][whichHaps[i][j][k]] -= invVar * sumX * linear[sib][j*2+k] * condLhd[j*2+k] * weight[i];
                                                     betaparentCovariateGradient[cov][level][whichHaps[i][j][k]] += invVar * x[j*2+k] * parentlinear[sib][j*2+k] * weight[i];
+                                                }
                                                 }
 
                                                 double tmp = (invVar + (nsib - 1) * invCov) * sumX * betaCovariate[cov][level][whichHaps[i][j][k]] * weight[i] * condLhd[j*2+k];
@@ -1892,10 +2025,20 @@ typeOfPhenotype == "quant" */
         for (int j = 0; j < betaCovariate[i].size(); j++) {
             for (int k = 0; k < nhap; k++) {
                 gradient[ix++] += betaCovariateGradient[i][j][k];
+                        if (typeOfPhenotype == "polytomous")
+                           {
+                           for (int h = 1; h < K-1; h++) 
+                              gradient[ix++] += betaCovariateGradient[i][j][k + h*nhap];
+						   }
             }
             if (!confounder[i] && haveFamilies && !options.hhrr)
                 for (int k = 0; k < nhap; k++) {
                     gradient[ix++] += betaparentCovariateGradient[i][j][k];
+                        if (typeOfPhenotype == "polytomous")
+                           {
+                           for (int h = 1; h < K-1; h++) 
+                              gradient[ix++] += betaparentCovariateGradient[i][j][k + h*nhap];
+						   }
                 }
             if (typeOfPhenotype == "quant") {
                 gradient[ix++] += betaCovariate0Gradient[i][j];
